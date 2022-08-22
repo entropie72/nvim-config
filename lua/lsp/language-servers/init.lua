@@ -6,11 +6,11 @@ lsp.tsserver.setup(coq.lsp_ensure_capabilities({
 	on_attach = fmt.on_attach,
 	root_dir = require("lspconfig").util.root_pattern("package.json", "tsconfig.json", "jsconfig.json"),
 }))
--- lsp.emmet_ls.setup({
--- 	capabilities = capabilities,
--- 	on_attach = fmt.on_attach,
--- 	filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css' },
--- })
+
+lsp.emmet_ls.setup({
+	on_attach = fmt.on_attach,
+	filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css' },
+})
 
 lsp.sumneko_lua.setup {
 	on_attach = fmt.on_attach,

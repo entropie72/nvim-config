@@ -37,7 +37,7 @@ o.undofile = true
 o.colorcolumn = "80"
 o.fcs = "eob:*"
 o.syntax = "on"
-vim.highlight.create("Normal", {ctermbg = 0, guibg = none}, false)
+vim.highlight.create("Normal", { ctermbg = 0, guibg = none }, false)
 
 vim.cmd [[
 	colorscheme dracula
