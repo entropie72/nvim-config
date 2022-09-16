@@ -57,19 +57,18 @@ return require("packer").startup(
 		use "onsails/lspkind.nvim"
 		use "tami5/lspsaga.nvim"
 		---
-		use {
-			'ms-jpq/coq_nvim',
-			branch = 'dev'
-		}
-		use {
-			'ms-jpq/coq.artifacts',
-			branch = 'artifacts'
-		}
-		-- use "hrsh7th/cmp-nvim-lsp"
-		-- use "hrsh7th/cmp-buffer"
-		-- use "hrsh7th/cmp-path"
-		-- use "hrsh7th/cmp-cmdline"
-		-- use "hrsh7th/nvim-cmp"
+		-- use {
+		-- 	'ms-jpq/coq_nvim',
+		-- }
+		-- use {
+		-- 	'ms-jpq/coq.artifacts',
+		-- 	branch = 'artifacts'
+		-- }
+		use "hrsh7th/cmp-nvim-lsp"
+		use "hrsh7th/cmp-buffer"
+		use "hrsh7th/cmp-path"
+		use "hrsh7th/cmp-cmdline"
+		use "hrsh7th/nvim-cmp"
 		-- use "hrsh7th/cmp-vsnip"
 		-- use "hrsh7th/vim-vsnip"
 

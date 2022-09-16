@@ -6,6 +6,6 @@ vim.g.coq_settings = {
 		}
 	},
 	keymap = {
-		pre_select = true,
+		pre_select = false,
 	},
 }
