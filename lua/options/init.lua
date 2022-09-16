@@ -40,7 +40,6 @@ o.syntax = "on"
 vim.highlight.create("Normal", { ctermbg = 0, guibg = none }, false)
 
 vim.cmd [[
-	colorscheme dracula
 	set termguicolors
 	set textwidth=80
 	au BufRead, BufNewFile * setlocal textwidth=80

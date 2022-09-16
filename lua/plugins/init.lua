@@ -5,6 +5,7 @@ return require("packer").startup(
 		------------ EDITOR -------------
 		use "ayu-theme/ayu-vim"
 		use "dracula/vim"
+		use "EdenEast/nightfox.nvim"
 		---
 		use "xiyaowong/nvim-transparent"
 		---
@@ -69,8 +70,8 @@ return require("packer").startup(
 		use "hrsh7th/cmp-path"
 		use "hrsh7th/cmp-cmdline"
 		use "hrsh7th/nvim-cmp"
-		-- use "hrsh7th/cmp-vsnip"
-		-- use "hrsh7th/vim-vsnip"
+		use "hrsh7th/cmp-vsnip"
+		use "hrsh7th/vim-vsnip"
 
 		-------- Specific language ----------
 		---

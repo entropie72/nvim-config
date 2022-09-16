@@ -1,8 +1,11 @@
 -- transparent vim
-require("transparent").setup({enable = true})
+require("transparent").setup({ enable = true })
 
 -- chadtree
 -- require("editor/chadtree")
+
+-- nightfox
+require("editor/nightfox")
 
 -- nvim-tree
 require("editor/nvim-tree")
