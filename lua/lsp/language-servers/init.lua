@@ -80,7 +80,9 @@ lsp.dartls.setup({
 	on_attach = fmt.on_attach,
 })
 
-lsp.sourcekit.setup({})
+lsp.sourcekit.setup({
+	on_attach = fmt.on_attach,
+})
 
 -- lsp.rust_analyzer.setup({})
 -- vim.cmd("let g:rustfmt_autosave = 1")
