@@ -22,6 +22,22 @@ cmp.setup(
 		mapping = {
 			["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
 			["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+			["<C-k>"] = cmp.mapping({
+				i = function()
+					if cmp.visible() then
+						cmp.abort()
+					else
+						cmp.complete()
+					end
+				end,
+				c = function()
+					if cmp.visible() then
+						cmp.close()
+					else
+						cmp.complete()
+					end
+				end,
+			}),
 			--['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
 			["<C-y>"] = cmp.config.disable, -- If you want to remove the default `<C-y>` mapping, You can specify `cmp.config.disable` value.
 			["<C-e>"] = cmp.mapping(
@@ -68,7 +84,7 @@ cmp.setup(
 		),
 		formatting = {
 			format = lspkind.cmp_format({ with_text = false, maxwidth = 50 })
-		}
+		},
 	}
 )
 
