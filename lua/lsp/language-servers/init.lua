@@ -11,7 +11,7 @@ lsp.tsserver.setup(
 
 lsp.emmet_ls.setup({
 	on_attach = fmt.on_attach,
-	filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css' },
+	filetypes = { 'html', 'css' },
 })
 
 lsp.html.setup({
