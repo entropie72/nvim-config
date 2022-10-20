@@ -9,10 +9,10 @@ lsp.tsserver.setup(
 	}
 )
 
--- lsp.emmet_ls.setup(coq.lsp_ensure_capabilities({
--- 	on_attach = fmt.on_attach,
--- 	filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css' },
--- }))
+lsp.emmet_ls.setup({
+	on_attach = fmt.on_attach,
+	filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css' },
+})
 
 lsp.html.setup({
 	on_attach = fmt.on_attach
