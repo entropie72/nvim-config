@@ -78,7 +78,6 @@ return require("packer").startup(
 		-- use 'pangloss/vim-javascript'
 		-- use 'leafgarland/typescript-vim'
 		-- use 'peitalin/vim-jsx-typescript'
-		use 'Valloric/MatchTagAlways'
 		use 'alvan/vim-closetag'
 		use {
 			'styled-components/vim-styled-components',

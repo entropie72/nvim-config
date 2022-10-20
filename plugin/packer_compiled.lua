@@ -74,11 +74,6 @@ end
 time([[try_loadstring definition]], false)
 time([[Defining packer_plugins]], true)
 _G.packer_plugins = {
-  MatchTagAlways = {
-    loaded = true,
-    path = "/Users/kaos/.local/share/nvim/site/pack/packer/start/MatchTagAlways",
-    url = "https://github.com/Valloric/MatchTagAlways"
-  },
   ["auto-pairs"] = {
     loaded = true,
     path = "/Users/kaos/.local/share/nvim/site/pack/packer/start/auto-pairs",
