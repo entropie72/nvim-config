@@ -78,7 +78,7 @@ return require("packer").startup(
 		-- use 'pangloss/vim-javascript'
 		-- use 'leafgarland/typescript-vim'
 		-- use 'peitalin/vim-jsx-typescript'
-		use 'alvan/vim-closetag'
+		use 'windwp/nvim-ts-autotag'
 		use {
 			'styled-components/vim-styled-components',
 			branch = 'main',

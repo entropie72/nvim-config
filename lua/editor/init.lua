@@ -4,6 +4,8 @@ require("transparent").setup({ enable = true })
 -- chadtree
 -- require("editor/chadtree")
 
+require('nvim-ts-autotag').setup()
+
 -- nightfox
 require("editor/nightfox")
 

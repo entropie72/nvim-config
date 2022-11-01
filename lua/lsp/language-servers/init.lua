@@ -69,12 +69,11 @@ lsp.svelte.setup({
 	on_attach = fmt.on_attach
 })
 
--- lsp.tailwindcss.setup(coq.lsp_ensure_capabilities({
--- 	on_attach = fmt.on_attach,
--- 	root_dir = require("lspconfig").util.root_pattern('tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.ts',
--- 		'unocss.config.js',
--- 		'unocss.config.ts')
--- }))
+lsp.tailwindcss.setup({
+	on_attach = fmt.on_attach,
+	root_dir = require("lspconfig").util.root_pattern('tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.ts',
+		'unocss.config.js', 'unocss.config.ts')
+})
 
 lsp.dartls.setup({
 	on_attach = fmt.on_attach,
