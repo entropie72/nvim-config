@@ -2,12 +2,13 @@ return require("packer").startup(
 	function()
 		use "wbthomason/packer.nvim"
 
+
 		------------ EDITOR -------------
 		use "ayu-theme/ayu-vim"
 		use "dracula/vim"
 		use "EdenEast/nightfox.nvim"
 		---
-		use "xiyaowong/nvim-transparent"
+		use "xiyaowong/transparent.nvim"
 		---
 		-- use {
 		--   "ms-jpq/chadtree",
