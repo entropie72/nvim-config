@@ -75,9 +75,9 @@ lsp.tailwindcss.setup({
 		'unocss.config.js', 'unocss.config.ts')
 })
 
-lsp.dartls.setup({
-	on_attach = fmt.on_attach,
-})
+-- lsp.dartls.setup({
+-- 	on_attach = fmt.on_attach,
+-- })
 
 lsp.sourcekit.setup({
 	on_attach = fmt.on_attach,
@@ -87,3 +87,12 @@ lsp.kotlin_language_server.setup {}
 
 -- lsp.rust_analyzer.setup({})
 -- vim.cmd("let g:rustfmt_autosave = 1")
+lsp.rust_analyzer.setup{
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+        enable = false;
+      }
+    }
+  }
+}

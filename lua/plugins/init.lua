@@ -88,7 +88,6 @@ return require("packer").startup(
 		---
 		use {
 			"fatih/vim-go",
-			run = ":GoUpdateBinaries"
 		}
 		use "hankchiutw/flutter-reload.vim"
 		use "rust-lang/rust.vim"

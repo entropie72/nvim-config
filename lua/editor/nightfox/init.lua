@@ -1,3 +1,5 @@
 vim.cmd [[
 	colorscheme carbonfox
 ]]
+
+	
