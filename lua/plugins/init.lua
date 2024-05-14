@@ -15,10 +15,10 @@ return require("packer").startup(
 		--   branch = "chad",
 		--   run = "python3 -m chadtree deps"
 		use {
-			'kyazdani42/nvim-tree.lua',
-			tag = 'nightly',
+			'nvim-tree/nvim-tree.lua',
+			-- tag = 'nightly',
 			requires = {
-				'kyazdani42/nvim-web-devicons',
+				'nvim-tree/nvim-web-devicons',
 			},
 			-- tag = 'nightly'
 		}
