@@ -10,7 +10,7 @@ require('nvim-ts-autotag').setup()
 require("editor/nightfox")
 
 -- nvim-tree
-require("editor/nvim-tree")
+-- require("editor/nvim-tree")
 
 -- bufferline
 require("editor/bufferline")

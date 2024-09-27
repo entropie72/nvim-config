@@ -6,7 +6,7 @@ require("telescope").setup {
       prompt_position = "bottom",
       preview_cutoff = 120,
       horizontal = {mirror = false},
-      vertical = {mirror = false}
+      vertical = {mirror = false},
     },
     find_command = {"rg", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case"},
     prompt_prefix = " ",
@@ -28,7 +28,7 @@ require("telescope").setup {
       "windows",
       "macos",
       "pubspec.lock",
-      "linux"
+      "linux",
     },
     generic_sorter = require "telescope.sorters".get_generic_fuzzy_sorter,
     path_display = {},

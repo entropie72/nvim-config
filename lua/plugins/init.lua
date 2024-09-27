@@ -5,8 +5,9 @@ return require("packer").startup(
 
 		------------ EDITOR -------------
 		use "ayu-theme/ayu-vim"
-		use "dracula/vim"
+		-- use "dracula/vim"
 		use "EdenEast/nightfox.nvim"
+		-- use {'nyoom-engineering/oxocarbon.nvim'}
 		---
 		use "xiyaowong/transparent.nvim"
 		---
@@ -57,7 +58,7 @@ return require("packer").startup(
 		-------------- LSP ---------------
 		use "neovim/nvim-lspconfig"
 		use "onsails/lspkind.nvim"
-		use "tami5/lspsaga.nvim"
+		-- use "tami5/lspsaga.nvim"
 		---
 		-- use {
 		-- 	'ms-jpq/coq_nvim',
@@ -66,13 +67,13 @@ return require("packer").startup(
 		-- 	'ms-jpq/coq.artifacts',
 		-- 	branch = 'artifacts'
 		-- }
-		use "hrsh7th/cmp-nvim-lsp"
-		use "hrsh7th/cmp-buffer"
-		use "hrsh7th/cmp-path"
-		use "hrsh7th/cmp-cmdline"
-		use "hrsh7th/nvim-cmp"
-		use "hrsh7th/cmp-vsnip"
-		use "hrsh7th/vim-vsnip"
+		-- use "hrsh7th/cmp-nvim-lsp"
+		-- use "hrsh7th/cmp-buffer"
+		-- use "hrsh7th/cmp-path"
+		-- use "hrsh7th/cmp-cmdline"
+		-- use "hrsh7th/nvim-cmp"
+		-- use "hrsh7th/cmp-vsnip"
+		-- use "hrsh7th/vim-vsnip"
 
 		-------- Specific language ----------
 		---

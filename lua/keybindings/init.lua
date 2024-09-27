@@ -24,7 +24,7 @@ map("n", "<leader>d", "<cmd>bdelete<CR>", silent_options)
 
 -- telescope
 map("n", "<leader>f", "<cmd>Telescope find_files<CR>", silent_options)
-map("n", "<C-p>", "<cmd>Telescope find_files<CR>", silent_options)
+map("n", "<C-p>", "<cmd>Telescope find_files hidden=true<CR>", silent_options)
 map("n", "<leader>g", "<cmd>Telescope live_grep<CR>", silent_options)
 
 -- saga

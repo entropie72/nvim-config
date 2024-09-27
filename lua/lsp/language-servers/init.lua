@@ -2,7 +2,7 @@ local lsp = require("lspconfig")
 -- local coq = require("coq")
 local fmt = require("lsp-format")
 fmt.setup {}
-lsp.tsserver.setup(
+lsp.ts_ls.setup(
 	{
 		on_attach = fmt.on_attach,
 		root_dir = require("lspconfig").util.root_pattern("package.json", "tsconfig.json", "jsconfig.json"),
