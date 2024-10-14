@@ -9,14 +9,14 @@ lsp.ts_ls.setup(
 	}
 )
 
-lsp.emmet_ls.setup({
-	on_attach = fmt.on_attach,
-	filetypes = { 'html', 'css' },
+lsp.emmet_language_server.setup({
+	-- on_attach = fmt.on_attach,
+	-- filetypes = { 'html', 'css' },
 })
 
-lsp.html.setup({
-	on_attach = fmt.on_attach
-})
+-- lsp.html.setup({
+-- 	on_attach = fmt.on_attach
+-- })
 
 -- lsp.sumneko_lua.setup({
 -- 	on_attach = fmt.on_attach,
