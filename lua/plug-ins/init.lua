@@ -1,3 +1,3 @@
 return {
-	deps = require('mini_deps')
+	deps = require('plug-ins.deps')
 }
