@@ -1,2 +1,3 @@
-require('options')
 require('plug-ins')
+require('options')
+require('editor')
