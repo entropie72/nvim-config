@@ -1,3 +1,1 @@
-return {
-	deps = require('plug-ins.deps')
-}
+require('plug-ins.deps').setup()
