@@ -10,7 +10,8 @@ map("n", '<leader>n', '<cmd>bnext<CR>', options)
 map("n", '<leader>p', '<cmd>bprevious<CR>', options)
 
 -- mini.pick
-map("n", '<leader>f', '<cmd> Pick files<CR>', options)
+map("n", '<leader>f', '<cmd>Pick files<CR>', options)
+map("n", '<leader>g', '<cmd>Pick grep_live<CR>', options)
 
 -- mini.files
 map("n", '<C-n>', '<cmd>lua MiniFiles.open()<CR>', options)

@@ -1,3 +1,5 @@
+require('editor.icons')
+require('editor.move')
 require('editor.colorscheme')
 require('editor.pick')
 require('editor.files')

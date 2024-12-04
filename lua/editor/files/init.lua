@@ -1,5 +1,5 @@
 require('mini.files').setup({
 	mappings = {
-		close = '<C-n>'
+		-- close = '<C-n>'
 	}
 })
