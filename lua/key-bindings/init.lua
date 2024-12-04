@@ -5,7 +5,9 @@ local options = {noremap = true}
 local silent_options = {noremap = true, silent = true}
 
 -- buffer
-
+map("n", '<leader>d', '<cmd>bdelete<CR>', options)
+map("n", '<leader>n', '<cmd>bnext<CR>', options)
+map("n", '<leader>p', '<cmd>bprevious<CR>', options)
 
 -- mini.pick
 map("n", '<leader>f', '<cmd> Pick files<CR>', options)
