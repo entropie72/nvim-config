@@ -4,3 +4,5 @@ require('mini.pick').setup({
 		move_up = '<C-k>'
 	},
 })
+
+

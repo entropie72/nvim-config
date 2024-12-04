@@ -13,4 +13,7 @@ add('echasnovski/mini.notify')
 add('williamboman/mason.nvim')
 add('williamboman/mason-lspconfig.nvim')
 add('neovim/nvim-lspconfig')
-add('echasnovski/mini.completion')
+add({
+	source = 'saghen/blink.cmp',
+	checkout = 'v0.7.3'
+})
