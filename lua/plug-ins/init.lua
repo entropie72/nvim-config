@@ -8,6 +8,7 @@ add('echasnovski/mini.files')
 add('echasnovski/mini.pick')
 add('echasnovski/mini.move')
 add('echasnovski/mini.notify')
+add('echasnovski/mini.pairs')
 
 -- code
 add('williamboman/mason.nvim')
