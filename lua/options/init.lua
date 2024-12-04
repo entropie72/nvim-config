@@ -3,7 +3,7 @@ local wo = vim.wo
 local bo = vim.bo
 
 vim.cmd("filetype plugin indent on")
-bo.smartindent = true
+-- bo.smartindent = true
 o.shortmess = o.shortmess .. "c"
 o.hidden = true
 o.whichwrap = "b,s,<,>,[,],h,l"
@@ -31,7 +31,7 @@ o.softtabstop = 2
 o.shiftwidth = 2
 bo.shiftwidth = 2
 o.termguicolors = true
-o.autoindent = true
+-- o.autoindent = true
 -- bo.autoindent = true
 o.undodir = "/Users/hao/.vim/undodir"
 o.undofile = true
