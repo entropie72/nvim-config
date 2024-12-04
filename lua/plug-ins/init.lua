@@ -10,6 +10,7 @@ add('echasnovski/mini.move')
 add('echasnovski/mini.notify')
 add('nvimdev/indentmini.nvim')
 add('echasnovski/mini.pairs')
+add('nvim-lualine/lualine.nvim')
 
 -- code
 add('williamboman/mason.nvim')
