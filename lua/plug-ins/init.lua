@@ -15,7 +15,9 @@ add('shellRaining/hlchunk.nvim')
 add('lewis6991/gitsigns.nvim')
 add({
 	source = 'folke/noice.nvim',
-	depends = { 'MunifTanjim/nui.nvim' },
+	depends = { 'MunifTanjim/nui.nvim',
+		'rcarriga/nvim-notify'
+	},
 })
 
 -- code
@@ -23,6 +25,7 @@ add('williamboman/mason.nvim')
 add('williamboman/mason-lspconfig.nvim')
 add('neovim/nvim-lspconfig')
 add('nvim-treesitter/nvim-treesitter')
+add('stevearc/conform.nvim')
 add({
 	source = 'saghen/blink.cmp',
 	checkout = 'v0.7.3'
