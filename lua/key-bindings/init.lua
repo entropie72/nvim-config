@@ -20,3 +20,5 @@ map("n", '<leader>b', '<cmd>Pick buffers<CR>', options)
 -- mini.files
 map("n", '<C-n>', '<cmd>lua MiniFiles.open()<CR>', options)
 
+-- kuala
+map("n", '<C-M-y>', '<cmd>lua require("kulala").run()<CR>', silent_options)

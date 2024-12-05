@@ -18,9 +18,11 @@ add('lewis6991/gitsigns.nvim')
 add('williamboman/mason.nvim')
 add('williamboman/mason-lspconfig.nvim')
 add('neovim/nvim-lspconfig')
--- add('nvim-treesitter/nvim-treesitter')
+add('nvim-treesitter/nvim-treesitter')
 add({
 	source = 'saghen/blink.cmp',
 	checkout = 'v0.7.3'
 })
 
+-- utils
+add('mistweaverco/kulala.nvim')
