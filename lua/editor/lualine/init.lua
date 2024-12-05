@@ -45,8 +45,11 @@ require('lualine').setup({
 				alternate_file = ''
 			}
 		}},
-		lualine_x = { '' },
-		lualine_y = { 'progress' },
+		lualine_x = {{
+			'filename',
+			path = 1
+		}},
+		lualine_y = { 'diff', 'progress' },
 		lualine_z = { '' },
 	},
 })

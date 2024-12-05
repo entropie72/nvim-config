@@ -12,6 +12,7 @@ add('nvimdev/indentmini.nvim')
 add('echasnovski/mini.pairs')
 add('nvim-lualine/lualine.nvim')
 add('shellRaining/hlchunk.nvim')
+add('lewis6991/gitsigns.nvim')
 
 -- code
 add('williamboman/mason.nvim')
