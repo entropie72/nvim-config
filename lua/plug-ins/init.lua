@@ -13,6 +13,10 @@ add('echasnovski/mini.pairs')
 add('nvim-lualine/lualine.nvim')
 add('shellRaining/hlchunk.nvim')
 add('lewis6991/gitsigns.nvim')
+add({
+	source = 'folke/noice.nvim',
+	depends = { 'MunifTanjim/nui.nvim' },
+})
 
 -- code
 add('williamboman/mason.nvim')
