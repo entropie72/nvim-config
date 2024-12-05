@@ -11,6 +11,7 @@ add('echasnovski/mini.notify')
 add('nvimdev/indentmini.nvim')
 add('echasnovski/mini.pairs')
 add('nvim-lualine/lualine.nvim')
+add('shellRaining/hlchunk.nvim')
 
 -- code
 add('williamboman/mason.nvim')
