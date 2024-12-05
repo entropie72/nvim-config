@@ -7,5 +7,4 @@ require('editor.files')
 require('editor.pairs')
 require('editor.indentmini')
 require('editor.lualine')
-
-require('noice').setup({})
+require('editor.noice')
