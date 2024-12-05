@@ -21,9 +21,7 @@ add({
 })
 
 -- code
-add('williamboman/mason.nvim')
 add('folke/ts-comments.nvim')
-add('williamboman/mason-lspconfig.nvim')
 add('neovim/nvim-lspconfig')
 add('nvim-treesitter/nvim-treesitter')
 add('stevearc/conform.nvim')
