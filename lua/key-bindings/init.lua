@@ -1,13 +1,14 @@
 vim.g.mapleader = " "
 
 local map = vim.api.nvim_set_keymap
-local options = {noremap = true}
-local silent_options = {noremap = true, silent = true}
+local options = { noremap = true }
+local silent_options = { noremap = true, silent = true }
 
 -- buffer
 map("n", '<leader>d', '<cmd>bdelete<CR>', options)
 map("n", '<leader>n', '<cmd>bnext<CR>', options)
 map("n", '<leader>p', '<cmd>bprevious<CR>', options)
+map("n", '<leader>D', '<cmd>bdelete!<CR>', options)
 
 -- navigate
 map("n", "G", "Gzz", options)
