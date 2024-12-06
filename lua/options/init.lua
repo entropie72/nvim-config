@@ -1,3 +1,4 @@
+
 local o = vim.o
 local wo = vim.wo
 local bo = vim.bo
@@ -25,11 +26,18 @@ wo.number = true
 wo.relativenumber = true
 o.cursorline = true
 wo.signcolumn = "yes:1"
+o.autoindent = true
 o.tabstop = 4
-bo.tabstop = 4
-o.softtabstop = 4
 o.shiftwidth = 4
-bo.shiftwidth = 4
+o.copyindent = true
+o.preserveindent = true
+o.softtabstop = 0
+o.expandtab = true
+o.list = true
+o.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
+-- bo.tabstop = 4
+-- o.softtabstop = 4
+-- bo.shiftwidth = 4
 o.termguicolors = true
 --[[ o.autoindent = true
 bo.autoindent = true ]]
@@ -41,8 +49,8 @@ o.syntax = "on"
 -- vim.api.nvim_set_hl("Normal", { ctermbg = 0, guibg = none }, false)
 
 
-local imap_expr = function(lhs, rhs)
- vim.keymap.set('i', lhs, rhs, { expr = true })
-end
-imap_expr('<Tab>',   [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
-imap_expr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
+-- local imap_expr = function(lhs, rhs)
+	-- vim.keymap.set('i', lhs, rhs, { expr = true })
+-- end
+-- imap_expr('<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
+-- imap_expr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])

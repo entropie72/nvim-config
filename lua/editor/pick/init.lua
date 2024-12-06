@@ -9,5 +9,3 @@ require('mini.pick').setup({
 		}
 	}
 })
-
-
