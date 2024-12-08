@@ -1,7 +1,8 @@
 require('lspconfig').volar.setup {
-    init_options = {
+    -- filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
+    --[[ init_options = {
         typescript = {
             tsdk = '/Users/hao/.bun/install/global/node_modules/typescript/lib',
         }
-    }
+    } ]]
 }

@@ -15,10 +15,10 @@ add('nvim-lualine/lualine.nvim')
 add('shellRaining/hlchunk.nvim')
 add('lewis6991/gitsigns.nvim')
 add({
-	source = 'folke/noice.nvim',
-	depends = { 'MunifTanjim/nui.nvim',
-		'rcarriga/nvim-notify'
-	},
+    source = 'folke/noice.nvim',
+    depends = { 'MunifTanjim/nui.nvim',
+        'rcarriga/nvim-notify'
+    },
 })
 
 -- code
@@ -27,9 +27,12 @@ add('neovim/nvim-lspconfig')
 add('nvim-treesitter/nvim-treesitter')
 add('stevearc/conform.nvim')
 add({
-	source = 'saghen/blink.cmp',
-	checkout = 'v0.7.3'
+    source = 'saghen/blink.cmp',
+    checkout = 'v0.7.3'
 })
 
 -- utils
 add('mistweaverco/kulala.nvim')
+
+-- lang
+add('leafOfTree/vim-vue-plugin')

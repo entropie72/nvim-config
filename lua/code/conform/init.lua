@@ -6,6 +6,7 @@ require('conform').setup({
     formatters_by_ft = {
         lua = { 'lua_ls' },
         typescript = { 'biome' },
-        vue = { 'biome' }
+        html = { 'superhtml' },
+        vue = { 'volar' }
     },
 })
