@@ -1,14 +1,14 @@
-vim.cmd.highlight('IndentLine guifg=#363636')
-vim.cmd.highlight('IndentLineCurrent guifg=#818181')
+vim.cmd.highlight('IndentLine guifg=#545454')
+vim.cmd.highlight('IndentLineCurrent guifg=#909090')
 
---[[ require('indentmini').setup({
-	exclude = { 'html' }
-}) ]]
+require('indentmini').setup({
+})
 
-require('hlchunk').setup({
+--[[ require('hlchunk').setup({
 	indent = {
 		enable = true
 	},
+}) ]]
 	--[[ chunk = {
 		enable = true,
 		duration = 0,
@@ -22,6 +22,5 @@ require('hlchunk').setup({
 			right_arrow = "",
 		}
 	} ]]
-})
 
 -- require('mini.indentscope').setup({})
