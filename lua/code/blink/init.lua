@@ -36,9 +36,9 @@ require('blink.cmp').setup({
                 border = 'rounded'
             }
         },
-        ghost_text = {
+        --[[ ghost_text = {
             enabled = true
-        }
+        } ]]
     },
 
     snippets = {
