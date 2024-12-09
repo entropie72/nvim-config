@@ -81,5 +81,10 @@ require('blink.cmp').setup({
                 }
             }
         }
+    },
+    appearance = {
+        kind_icons = {
+            Color = ''
+        }
     }
 })
