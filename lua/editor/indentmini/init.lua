@@ -1,10 +1,10 @@
 vim.cmd.highlight('IndentLine guifg=#545454')
 vim.cmd.highlight('IndentLineCurrent guifg=#909090')
 
---[[ require('indentmini').setup({
-}) ]]
+require('indentmini').setup({
+})
 
-require('hlchunk').setup({
+--[[ require('hlchunk').setup({
     indent = {
         enable = true
     },
@@ -21,6 +21,6 @@ require('hlchunk').setup({
             right_arrow = "",
         }
     }
-})
+}) ]]
 
 -- require('mini.indentscope').setup({})

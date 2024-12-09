@@ -10,4 +10,5 @@ require('nvim-treesitter.configs').setup(
         incremental_selection = {
             enable = false
         }
-    })
+    }
+)

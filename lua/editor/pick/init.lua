@@ -7,5 +7,5 @@ require('mini.pick').setup({
         config = {
             border = 'rounded'
         }
-    }
+    },
 })

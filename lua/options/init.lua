@@ -2,8 +2,8 @@ local o = vim.o
 local wo = vim.wo
 local bo = vim.bo
 
--- vim.cmd("filetype plugin indent on")
 -- bo.smartindent = true
+vim.api.nvim_command('filetype plugin indent on')
 
 o.shortmess = o.shortmess .. "c"
 o.hidden = true
