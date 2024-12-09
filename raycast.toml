@@ -1,0 +1,226 @@
+PackerSnapshot
+packloadall
+Q!
+!~
+w1
+w raycast.toml
+quitall
+BufferLineCyclePrev
+!q!
+.,.+44w
+we
+wprevious
+wincmd
+w _pnpm
+%s/BlexMono Nerd Font/Source Code Pro/g
+qkkjkj
+PackerSnapshotDelete
+%s/"/'
+DepsAdd mini.icon
+d:
+DepsShowLog
+DepsAdd mini.nvim
+%%so
+DepsUpdateOffline mini.nvim
+DepsAdd mini
+DepsAdd mini.icosn
+DepsAdd mini.icons
+deps
+dep
+DepsAdd
+q2
+q!@
+TSInstall python
+:q!
+lua mini
+lua MiniFiles.close()
+Cbench
+mini
+MiniIcons.get()
+lua COLORIZER_SETUP_HOOK
+lua MiniIcons.get('glyph')
+h MiniIcons
+Mini
+lua MiniIcons
+lua MiniIcons.tweak_lsp_kind
+lua MiniIcons.list()
+lua MiniIcons.list
+lua MiniIcons.config
+lua MiniIcons.config()
+lua COLORIZER_SETUP_HOO
+lua MiniIcons.get
+lua MiniIcons.get()
+lua MiniCompletion
+lua _G.MiniIcons
+lua   local imap_expr = function(lhs, rhs)
+uu
+2w
+ 
+228
+q~
+kk
+ư
+ww
+PackerSync
+packa
+LazyHealth
+Deps
+MiniDeps
+vi
+%sp
+DepsUpdateOffline
+lua MiniFiles
+lua MiniFiles.get_explorer_stat
+lua MiniFiles.open()
+lu
+lua MiniFiles.close
+a1
+Pick
+qj
+'<,
+Bdelete
+bdelete
+bprevious
+bNext
+lua MiniPick
+Pick grep
+Pick grep_live
+lua MiniMove.move_line()
+lua MiniNotify
+Pick buffers
+LspInstall
+<gv
+.q!
+lua MiniIcons.tweak_lsp_kind()
+w\
+TSInstall
+ew
+Pick files
+L
+source
+%sojj
+TSUpdate
+TSInstall luadoc
+TSInstall typescript
+MasonInstall
+MasonInstall typescript
+MasonInstall typescript-language-server
+Q1
+%;
+hello
+w:%so
+i
+:
+ju
+j
+::q
+k
+!q
+so
+%sojjj
+bclose
+bwipe
+!bwipe
+!bdelete
+%le
+x
+%sop
+Gitsigns diffthis
+Gitsigns toggle_linehl
+Gitsigns toggle_word_diff
+Gitsigns toggle_current_line_blame
+Gitsigns toggle_signs
+Gitsigns toggle_numhl
+o
+Gitsigns reset_buffer_index
+5so
+LualineBuffersJump
+lua require('kulala').scratchpad()
+lua require('kulala').toggle_view()
+lua require('kulala').run_all()
+lua require('kulala').jump_next()
+lua require('kulala').close()
+lua require('kulala').close_buffer()
+TSInstall http
+w2
+3
+lua require('kulala').run()
+window-moving
+require('notify')('Hello'
+require('notify')('Hello')
+require('kuala'
+lua require('notify').('hello')
+:h notify.setup()
+l
+lua require('notify')(
+lua require('notify')('hello')
+w: f
+MasonLog
+ls
+%sok
+MasonInstall vue-language-server
+Mason
+MasonUninstallAll
+%
+TSInstall rust svelte zig
+TSInstall html tmux go javascript
+lspinstallinfo
+LspInfo
+bd
+bw
+bd!
+:q
+TSUninstall html
+%sik
+%xso
+CmpStatus
+jj
+TSInstall html
+tsin
+!
+qq
+TSInstall nu
+TSInstallInfo
+a
+'<,'>w
+:%so
+tree
+1
+conf
+help conform-formmateres
+help conform-formmaters
+help conform-formatters
+ConformInfo
+TSUninstall vue
+TSInstall vue
+a!
+wq!
+.!q:
+lua requ
+lua
+lua require('blink.cmp.sources.lib').reload()
+:DepsClean
+%s
+verbose setlocal commentstring?
+DepsUpdate
+2
+'<,'>
+'<,'>q
+Q
+u
+DepsClean
+wq
+'<,'>q!
+:w
+w;
+'w
+%sokk
+make install_jsregexp
+w!
+jk
+q1
+q
+%so
+q!
+w
+

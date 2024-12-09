@@ -3,7 +3,7 @@ require('blink.cmp').setup({
         preset = 'super-tab',
         ['<C-j>'] = { 'select_next', 'fallback' },
         ['<C-k>'] = { 'select_prev', 'fallback' },
-        ['<CR>'] = { 'accept', 'fallback' },
+        ['<CR>'] = { 'select_and_accept', 'fallback' },
         ['<C-o>'] = { 'show', 'show_documentation', 'hide_documentation' },
         ['<C-n>'] = { 'snippet_forward', 'fallback' },
         ['<C-p>'] = { 'snippet_backward', 'fallback' },
@@ -18,7 +18,7 @@ require('blink.cmp').setup({
         },
         list = {
             -- selection = 'preselect'
-            selection = 'preselect'
+            selection = 'manual'
         },
         menu = {
             border = 'rounded',
@@ -42,20 +42,24 @@ require('blink.cmp').setup({
     },
 
     snippets = {
+        -- <1> fix snippet behavior, copy from the official README.md
         enabled = function(ctx)
             return ctx ~= nil and ctx.trigger.kind == vim.lsp.protocol.CompletionTriggerKind.TriggerCharacter
         end,
+        -- </1>
 
-        expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
+        -- <2> luasnip, copy from the official README.md
+        -- expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
 
-        active = function(filter)
-            if filter and filter.direction then
-                return require('luasnip').jumpable(filter.direction)
-            end
-            return require('luasnip').in_snippet()
-        end,
+        -- active = function(filter)
+        -- if filter and filter.direction then
+        -- return require('luasnip').jumpable(filter.direction)
+        -- end
+        -- return require('luasnip').in_snippet()
+        -- end,
 
-        jump = function(direction) require('luasnip').jump(direction) end,
+        -- jump = function(direction) require('luasnip').jump(direction) end,
+        -- </2>
     },
 
     sources = {
@@ -64,18 +68,18 @@ require('blink.cmp').setup({
                 'lsp',
                 'path',
                 'snippets',
-                'luasnip',
+                -- 'luasnip',
             }
         },
         providers = {
-            --[[ snippet = {
+            snippet = {
                 name = 'Snippets',
                 module = 'blink.cmp.sources.snippets',
                 opts = {
                     friendly_snippets = true,
                     search_paths = { vim.fn.stdpath('config') .. '/snippets' },
                 }
-            } ]]
+            }
         }
     }
 })
