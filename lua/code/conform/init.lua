@@ -7,6 +7,8 @@ require('conform').setup({
         lua = { 'lua_ls' },
         typescript = { 'biome' },
         html = { 'superhtml' },
-        vue = { 'volar' }
+        vue = { 'volar' },
+        json = { 'biome' },
+        swift = { 'swiftformat' }
     },
 })

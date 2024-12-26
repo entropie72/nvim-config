@@ -1,3 +1,4 @@
+require('code.lsp.swift')
 require('code.lsp.biome')
 require('code.lsp.html')
 require('code.lsp.lua')
