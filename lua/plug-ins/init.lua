@@ -3,6 +3,7 @@ local add = MiniDeps.add
 
 -- editor
 add('EdenEast/nightfox.nvim')
+add('projekt0n/github-nvim-theme')
 add('echasnovski/mini.icons')
 add('echasnovski/mini.files')
 add('echasnovski/mini.pick')
