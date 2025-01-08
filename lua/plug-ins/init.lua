@@ -29,13 +29,12 @@ add('nvim-treesitter/nvim-treesitter')
 add('stevearc/conform.nvim')
 add({
     source = 'saghen/blink.cmp',
-    checkout = 'v0.7.6',
+    checkout = 'v0.10.0'
 })
 add('L3MON4D3/LuaSnip')
 add('rafamadriz/friendly-snippets')
+add('JoosepAlviste/nvim-ts-context-commentstring')
+add('numToStr/Comment.nvim')
 
 -- utils
 add('mistweaverco/kulala.nvim')
-
--- lang
-add('leafOfTree/vim-vue-plugin')

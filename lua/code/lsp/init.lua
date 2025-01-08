@@ -1,6 +1,6 @@
 require('code.lsp.swift')
 require('code.lsp.biome')
-require('code.lsp.html')
+require('code.lsp.html_css')
 require('code.lsp.lua')
 require('code.lsp.svelte')
 require('code.lsp.tailwindcss')

@@ -16,9 +16,10 @@ require('blink.cmp').setup({
             },
         },
         list = {
-            selection = function(ctx)
-                return ctx.mode == 'manual'
-            end
+            selection = {
+                preselect = false,
+                auto_insert = true,
+            }
         },
         menu = {
             border = 'rounded',
