@@ -1,5 +1,5 @@
---[[ <config for vue ^2.0.0>
-local vue_language_server_path = '/Users/hao/.bun/install/global/node_modules/@vue/typescript-plugin'
+-- <config for vue ^2.0.0>
+local vue_language_server_path = '/Users/hao/.bun/install/global/node_modules/@vue/language-server/'
 
 require('lspconfig').ts_ls.setup({
     init_options = {
@@ -16,7 +16,4 @@ require('lspconfig').ts_ls.setup({
         "typescript",
         "vue",
     }
-}) ]]
-
-require('lspconfig').ts_ls.setup({
 })
