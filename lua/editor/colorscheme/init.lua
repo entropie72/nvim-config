@@ -14,23 +14,27 @@
 })
 require('ayu').colorscheme() ]]
 
---[[ require('nightfox').setup({
-	options = {
-		transparent = true,
-		styles = {
-			keywords = "bold",
-			comments = "italic"
-		}
-	}
-}) ]]
-
-
--- vim.cmd[[colorscheme carbonfox]]
-
-require('github-theme').setup({
+require('nightfox').setup({
     options = {
-        transparent = true
+        transparent = true,
+        styles = {
+            keywords = "bold",
+            comments = "italic"
+        }
     }
 })
 
-vim.cmd [[colorscheme github_dark_default]]
+vim.cmd [[colorscheme carbonfox]]
+
+--[[ require('github-theme').setup({
+    options = {
+        transparent = true,
+        styles = {
+            comments = 'italic',
+            keywords = 'italic,bold',
+            types = 'italic',
+        }
+    }
+}) ]]
+
+-- vim.cmd [[colorscheme github_dark_default]]
