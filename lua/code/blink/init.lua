@@ -8,7 +8,6 @@ require('blink.cmp').setup({
         ['<C-n>'] = { 'snippet_forward', 'fallback' },
         ['<C-p>'] = { 'snippet_backward', 'fallback' },
     },
-
     completion = {
         accept = {
             auto_brackets = {
@@ -17,15 +16,16 @@ require('blink.cmp').setup({
             },
         },
         list = {
-            -- selection = 'preselect'
-            selection = 'manual'
+            selection = function(ctx)
+                return ctx.mode == 'manual'
+            end
         },
         menu = {
             border = 'rounded',
             draw = {
                 padding = 1,
                 gap = 1,
-                treesitter = true,
+                -- treesitter = true,
                 -- columns = { { "label", "label_description", gap = 1 }, { "kind_icon", "kind" } }
             }
         },
@@ -34,7 +34,8 @@ require('blink.cmp').setup({
             auto_show_delay_ms = 1000,
             window = {
                 border = 'rounded'
-            }
+            },
+            treesitter_highlighting = true,
         },
         --[[ ghost_text = {
             enabled = true
@@ -43,9 +44,9 @@ require('blink.cmp').setup({
 
     snippets = {
         -- <1> fix snippet behavior, copy from the official README.md
-        enabled = function(ctx)
+        --[[ enabled = function(ctx)
             return ctx ~= nil and ctx.trigger.kind == vim.lsp.protocol.CompletionTriggerKind.TriggerCharacter
-        end,
+        end, ]]
         -- </1>
 
         -- <2> luasnip, copy from the official README.md
@@ -63,13 +64,10 @@ require('blink.cmp').setup({
     },
 
     sources = {
-        completion = {
-            enabled_providers = {
-                'lsp',
-                'path',
-                'snippets',
-                -- 'luasnip',
-            }
+        default = {
+            'lsp',
+            'path',
+            'snippets'
         },
         providers = {
             snippet = {
