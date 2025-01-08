@@ -4,11 +4,11 @@ require('conform').setup({
         lsp_format = 'fallback'
     },
     formatters_by_ft = {
-        lua = { 'lua_ls' },
         typescript = { 'biome' },
         html = { 'superhtml' },
-        vue = { 'volar' },
+        vue = { 'prettier' },
         json = { 'biome' },
-        swift = { 'swiftformat' }
+        swift = { 'swiftformat' },
+        astro = { 'prettier' }
     },
 })
