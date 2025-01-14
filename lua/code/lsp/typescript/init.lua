@@ -12,8 +12,10 @@ require('lspconfig').ts_ls.setup({
         },
     },
     filetypes = {
-        "javascript",
-        "typescript",
+        -- "javascript",
+        -- "typescript",
         "vue",
     }
 })
+
+require('lspconfig').vtsls.setup({})
