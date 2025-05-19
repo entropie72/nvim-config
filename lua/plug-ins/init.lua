@@ -27,9 +27,10 @@ add('folke/ts-comments.nvim')
 add('neovim/nvim-lspconfig')
 add('nvim-treesitter/nvim-treesitter')
 add('stevearc/conform.nvim')
+add('kylechui/nvim-surround')
 add({
     source = 'saghen/blink.cmp',
-    checkout = 'v0.10.0'
+    -- checkout = 'v0.10.0'
 })
 add('L3MON4D3/LuaSnip')
 add('rafamadriz/friendly-snippets')

@@ -3,7 +3,7 @@ require('blink.cmp').setup({
         preset = 'super-tab',
         ['<C-j>'] = { 'select_next', 'fallback' },
         ['<C-k>'] = { 'select_prev', 'fallback' },
-        -- ['<CR>'] = { 'accept', 'fallback' },
+        ['<Tab>'] = { 'select_and_accept', 'fallback' },
         ['<C-o>'] = { 'show', 'show_documentation', 'hide_documentation' },
         ['<C-n>'] = { 'snippet_forward', 'fallback' },
         ['<C-p>'] = { 'snippet_backward', 'fallback' },

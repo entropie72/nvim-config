@@ -9,6 +9,6 @@ require('conform').setup({
         vue = { 'prettier' },
         json = { 'biome' },
         swift = { 'swiftformat' },
-        astro = { 'prettier' }
+        astro = { 'prettier, superhtml' }
     },
 })
