@@ -1,4 +1,4 @@
---[[ require('lspconfig').volar.setup {
+--[[ vim.lsp.config.volar.setup {
     -- filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
     init_options = {
         typescript = {
@@ -7,6 +7,4 @@
     }
 } ]]
 
-require('lspconfig').volar.setup({
-
-})
+vim.lsp.config('volar', {})

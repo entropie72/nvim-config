@@ -1,1 +1,1 @@
-require('lspconfig').sourcekit.setup({})
+vim.lsp.config('sourcekit', {})

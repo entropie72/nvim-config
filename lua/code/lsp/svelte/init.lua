@@ -1,1 +1,1 @@
-require('lspconfig').svelte.setup({})
+vim.lsp.config('svelte', {})

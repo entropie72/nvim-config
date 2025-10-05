@@ -1,4 +1,4 @@
-require('lspconfig').lua_ls.setup({
+vim.lsp.config('lua-ls', {
     settings = {
         Lua = {
             format = {

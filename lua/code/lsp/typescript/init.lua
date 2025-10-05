@@ -1,7 +1,7 @@
 -- <config for vue ^2.0.0>
 local vue_language_server_path = '/Users/hao/.bun/install/global/node_modules/@vue/language-server/'
 
-require('lspconfig').ts_ls.setup({
+vim.lsp.config('tl_ls', {
     init_options = {
         plugins = {
             {
@@ -18,4 +18,4 @@ require('lspconfig').ts_ls.setup({
     }
 })
 
-require('lspconfig').vtsls.setup({})
+vim.lsp.config('vtsls', {})
