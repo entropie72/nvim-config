@@ -1,5 +1,5 @@
-require('mini.files').setup({
-    mappings = {
-        synchronize = '<CR>',
-    }
+require("mini.files").setup({
+	mappings = {
+		synchronize = "<CR>",
+	},
 })

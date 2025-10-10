@@ -2,14 +2,14 @@
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-vim.lsp.config('html', {
-    capabilities = capabilities,
+-- vim.lsp.enable('html', {
+--     capabilities = capabilities,
+-- })
+--
+vim.lsp.enable("emmet_language_server", {
+	filetypes = { "html", "javascriptreact", "typescriptreact", "typescript.tsx" },
 })
 
-vim.lsp.config('emmet_language_server', {
-    filetypes = { "html", "javascriptreact", "typescriptreact", "typescript.tsx" }
-})
-
-vim.lsp.config('cssls', {
-    capabilities = capabilities,
+vim.lsp.enable("cssls", {
+	capabilities = capabilities,
 })

@@ -1,13 +1,13 @@
-vim.lsp.config('lua-ls', {
-    settings = {
-        Lua = {
-            format = {
-                enable = true,
-                defaultConfig = {
-                    indent_style = "space",
-                    indent_size = "8"
-                }
-            },
-        },
-    }
+vim.lsp.enable("lua-ls", {
+	settings = {
+		Lua = {
+			format = {
+				enable = true,
+				defaultConfig = {
+					indent_style = "space",
+					indent_size = "8",
+				},
+			},
+		},
+	},
 })

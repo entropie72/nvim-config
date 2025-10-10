@@ -357,23 +357,23 @@ local H = {}
 ---   require('mini.deps').setup({}) -- replace {} with your config table
 --- <
 MiniDeps.setup = function(config)
-  -- Export module
-  _G.MiniDeps = MiniDeps
+	-- Export module
+	_G.MiniDeps = MiniDeps
 
-  -- Setup config
-  config = H.setup_config(config)
+	-- Setup config
+	config = H.setup_config(config)
 
-  -- Apply config
-  H.apply_config(config)
+	-- Apply config
+	H.apply_config(config)
 
-  -- Define behavior
-  H.create_autocommands()
+	-- Define behavior
+	H.create_autocommands()
 
-  -- Create default highlighting
-  H.create_default_hl()
+	-- Create default highlighting
+	H.create_default_hl()
 
-  -- Create user commands
-  H.create_user_commands()
+	-- Create user commands
+	H.create_user_commands()
 end
 
 --stylua: ignore
@@ -466,57 +466,65 @@ MiniDeps.config = {
 ---@param opts table|nil Options. Possible fields:
 ---   - <bang> `(boolean)` - whether to use `:packadd!` instead of plain |:packadd|.
 MiniDeps.add = function(spec, opts)
-  opts = opts or {}
-  if type(opts) ~= 'table' then H.error('`opts` should be table.') end
-  if opts.source or opts.name or opts.checkout then H.error('`add()` accepts only single spec.') end
+	opts = opts or {}
+	if type(opts) ~= "table" then
+		H.error("`opts` should be table.")
+	end
+	if opts.source or opts.name or opts.checkout then
+		H.error("`add()` accepts only single spec.")
+	end
 
-  -- Normalize
-  local plugs = {}
-  H.expand_spec(plugs, spec)
+	-- Normalize
+	local plugs = {}
+	H.expand_spec(plugs, spec)
 
-  -- Process
-  local plugs_to_install = {}
-  for i, p in ipairs(plugs) do
-    local path, is_present = H.get_plugin_path(p.name)
-    p.path = path
-    if not is_present then table.insert(plugs_to_install, vim.deepcopy(p)) end
-  end
+	-- Process
+	local plugs_to_install = {}
+	for i, p in ipairs(plugs) do
+		local path, is_present = H.get_plugin_path(p.name)
+		p.path = path
+		if not is_present then
+			table.insert(plugs_to_install, vim.deepcopy(p))
+		end
+	end
 
-  -- Install
-  if #plugs_to_install > 0 then
-    H.ensure_git_exec()
-    for _, p in ipairs(plugs_to_install) do
-      p.job = H.cli_new_job({}, vim.fn.getcwd())
-    end
+	-- Install
+	if #plugs_to_install > 0 then
+		H.ensure_git_exec()
+		for _, p in ipairs(plugs_to_install) do
+			p.job = H.cli_new_job({}, vim.fn.getcwd())
+		end
 
-    H.notify(string.format('Installing `%s`', plugs[#plugs].name))
-    H.plugs_exec_hooks(plugs_to_install, 'pre_install')
-    H.plugs_install(plugs_to_install)
-    H.plugs_exec_hooks(plugs_to_install, 'post_install')
-  end
+		H.notify(string.format("Installing `%s`", plugs[#plugs].name))
+		H.plugs_exec_hooks(plugs_to_install, "pre_install")
+		H.plugs_install(plugs_to_install)
+		H.plugs_exec_hooks(plugs_to_install, "post_install")
+	end
 
-  -- Add plugins to current session
-  local cmd = 'packadd' .. (opts.bang and '!' or '') .. ' '
-  for _, p in ipairs(plugs) do
-    -- Register in 'mini.deps' session
-    table.insert(H.session, p)
+	-- Add plugins to current session
+	local cmd = "packadd" .. (opts.bang and "!" or "") .. " "
+	for _, p in ipairs(plugs) do
+		-- Register in 'mini.deps' session
+		table.insert(H.session, p)
 
-    -- Add to 'runtimepath'
-    vim.cmd(cmd .. p.name)
-  end
+		-- Add to 'runtimepath'
+		vim.cmd(cmd .. p.name)
+	end
 
-  -- Execute 'after/' scripts if not during startup (when they will be sourced
-  -- automatically), as `:packadd` only sources plain 'plugin/' files.
-  -- See https://github.com/vim/vim/issues/1994.
-  -- Deliberately do so after executing all currently known 'plugin/' files.
-  local should_load_after_dir = vim.v.vim_did_enter == 1 and not opts.bang and vim.o.loadplugins
-  if not should_load_after_dir then return end
-  for _, p in ipairs(plugs) do
-    -- NOTE: This sources first lua and then vim, not how it is done during
-    -- startup (`:h loadplugins`) for speed (one `glob()` instead of two).
-    local after_paths = vim.fn.glob(p.path .. '/after/plugin/**/*.{vim,lua}', false, true)
-    vim.tbl_map(H.source, after_paths)
-  end
+	-- Execute 'after/' scripts if not during startup (when they will be sourced
+	-- automatically), as `:packadd` only sources plain 'plugin/' files.
+	-- See https://github.com/vim/vim/issues/1994.
+	-- Deliberately do so after executing all currently known 'plugin/' files.
+	local should_load_after_dir = vim.v.vim_did_enter == 1 and not opts.bang and vim.o.loadplugins
+	if not should_load_after_dir then
+		return
+	end
+	for _, p in ipairs(plugs) do
+		-- NOTE: This sources first lua and then vim, not how it is done during
+		-- startup (`:h loadplugins`) for speed (one `glob()` instead of two).
+		local after_paths = vim.fn.glob(p.path .. "/after/plugin/**/*.{vim,lua}", false, true)
+		vim.tbl_map(H.source, after_paths)
+	end
 end
 
 --- Update plugins
@@ -537,41 +545,47 @@ end
 ---   - <offline> `(boolean)` - whether to skip downloading updates from sources.
 ---     Default: `false`.
 MiniDeps.update = function(names, opts)
-  opts = vim.tbl_deep_extend('force', { force = false, offline = false }, opts or {})
+	opts = vim.tbl_deep_extend("force", { force = false, offline = false }, opts or {})
 
-  -- Compute array of plugin data to be reused in update. Each contains a CLI
-  -- job "assigned" to plugin's path which stops execution after first error.
-  local plugs = H.plugs_from_names(names)
-  if #plugs == 0 then return H.notify('Nothing to update') end
+	-- Compute array of plugin data to be reused in update. Each contains a CLI
+	-- job "assigned" to plugin's path which stops execution after first error.
+	local plugs = H.plugs_from_names(names)
+	if #plugs == 0 then
+		return H.notify("Nothing to update")
+	end
 
-  -- Prepare repositories and specifications
-  H.ensure_git_exec()
-  H.plugs_ensure_origin_source(plugs)
+	-- Prepare repositories and specifications
+	H.ensure_git_exec()
+	H.plugs_ensure_origin_source(plugs)
 
-  -- Preprocess before downloading
-  H.plugs_infer_head(plugs)
-  H.plugs_ensure_target_refs(plugs)
-  H.plugs_infer_commit(plugs, 'monitor', 'monitor_from')
+	-- Preprocess before downloading
+	H.plugs_infer_head(plugs)
+	H.plugs_ensure_target_refs(plugs)
+	H.plugs_infer_commit(plugs, "monitor", "monitor_from")
 
-  -- Download data if asked
-  if not opts.offline then H.plugs_download_updates(plugs) end
+	-- Download data if asked
+	if not opts.offline then
+		H.plugs_download_updates(plugs)
+	end
 
-  -- Process data for update
-  H.plugs_infer_commit(plugs, 'checkout', 'checkout_to')
-  H.plugs_infer_commit(plugs, 'monitor', 'monitor_to')
-  H.plugs_infer_log(plugs, 'head', 'checkout_to', 'checkout_log')
-  H.plugs_infer_log(plugs, 'monitor_from', 'monitor_to', 'monitor_log')
+	-- Process data for update
+	H.plugs_infer_commit(plugs, "checkout", "checkout_to")
+	H.plugs_infer_commit(plugs, "monitor", "monitor_to")
+	H.plugs_infer_log(plugs, "head", "checkout_to", "checkout_log")
+	H.plugs_infer_log(plugs, "monitor_from", "monitor_to", "monitor_log")
 
-  -- Checkout if asked (before feedback to include possible checkout errors)
-  if opts.force then H.plugs_checkout(plugs) end
+	-- Checkout if asked (before feedback to include possible checkout errors)
+	if opts.force then
+		H.plugs_checkout(plugs)
+	end
 
-  -- Make feedback
-  local lines = H.update_compute_feedback_lines(plugs)
-  local feedback = opts.force and H.update_feedback_log or H.update_feedback_confirm
-  feedback(lines)
+	-- Make feedback
+	local lines = H.update_compute_feedback_lines(plugs)
+	local feedback = opts.force and H.update_feedback_log or H.update_feedback_confirm
+	feedback(lines)
 
-  -- Show job warnings and errors
-  H.plugs_show_job_notifications(plugs, 'update')
+	-- Show job warnings and errors
+	H.plugs_show_job_notifications(plugs, "update")
 end
 
 --- Clean plugins
@@ -586,21 +600,25 @@ end
 ---   - <force> `(boolean)` - whether to force delete without confirmation.
 ---     Default: `false`.
 MiniDeps.clean = function(opts)
-  opts = vim.tbl_deep_extend('force', { force = false }, opts or {})
+	opts = vim.tbl_deep_extend("force", { force = false }, opts or {})
 
-  -- Compute path candidates to delete
-  local is_in_session = {}
-  for _, s in ipairs(MiniDeps.get_session()) do
-    is_in_session[s.path] = true
-  end
+	-- Compute path candidates to delete
+	local is_in_session = {}
+	for _, s in ipairs(MiniDeps.get_session()) do
+		is_in_session[s.path] = true
+	end
 
-  local is_absent_plugin = function(x) return vim.fn.isdirectory(x) == 1 and not is_in_session[x] end
-  local absent_paths = vim.tbl_filter(is_absent_plugin, H.get_all_plugin_paths())
+	local is_absent_plugin = function(x)
+		return vim.fn.isdirectory(x) == 1 and not is_in_session[x]
+	end
+	local absent_paths = vim.tbl_filter(is_absent_plugin, H.get_all_plugin_paths())
 
-  -- Clean
-  if #absent_paths == 0 then return H.notify('Nothing to clean') end
-  local clean_fun = opts.force and H.clean_delete or H.clean_confirm
-  clean_fun(absent_paths)
+	-- Clean
+	if #absent_paths == 0 then
+		return H.notify("Nothing to clean")
+	end
+	local clean_fun = opts.force and H.clean_delete or H.clean_confirm
+	clean_fun(absent_paths)
 end
 
 --- Compute snapshot
@@ -608,16 +626,18 @@ end
 ---@return table A snapshot table: plugin names as keys and state as values.
 ---   All plugins in current session are processed.
 MiniDeps.snap_get = function()
-  local plugs = H.plugs_from_names()
-  H.ensure_git_exec()
-  H.plugs_infer_head(plugs)
-  H.plugs_show_job_notifications(plugs, 'computing snapshot')
+	local plugs = H.plugs_from_names()
+	H.ensure_git_exec()
+	H.plugs_infer_head(plugs)
+	H.plugs_show_job_notifications(plugs, "computing snapshot")
 
-  local snap = {}
-  for _, p in ipairs(plugs) do
-    if p.head ~= '' then snap[p.name] = p.head end
-  end
-  return snap
+	local snap = {}
+	for _, p in ipairs(plugs) do
+		if p.head ~= "" then
+			snap[p.name] = p.head
+		end
+	end
+	return snap
 end
 
 --- Apply snapshot
@@ -631,21 +651,25 @@ end
 ---@param snap table A snapshot table: plugin names as keys and state as values.
 ---   Only plugins in current session are processed.
 MiniDeps.snap_set = function(snap)
-  if type(snap) ~= 'table' then H.error('Snapshot should be a table.') end
+	if type(snap) ~= "table" then
+		H.error("Snapshot should be a table.")
+	end
 
-  -- Construct current session plugin data with `checkout` from snapshot
-  for k, v in pairs(snap) do
-    if not (type(k) == 'string' and type(v) == 'string') then snap[k] = nil end
-  end
-  local plugs = H.plugs_from_names(vim.tbl_keys(snap))
-  for _, p in ipairs(plugs) do
-    p.checkout = snap[p.name]
-  end
+	-- Construct current session plugin data with `checkout` from snapshot
+	for k, v in pairs(snap) do
+		if not (type(k) == "string" and type(v) == "string") then
+			snap[k] = nil
+		end
+	end
+	local plugs = H.plugs_from_names(vim.tbl_keys(snap))
+	for _, p in ipairs(plugs) do
+		p.checkout = snap[p.name]
+	end
 
-  -- Checkout
-  H.ensure_git_exec()
-  H.plugs_checkout(plugs)
-  H.plugs_show_job_notifications(plugs, 'applying snapshot')
+	-- Checkout
+	H.ensure_git_exec()
+	H.plugs_checkout(plugs)
+	H.plugs_show_job_notifications(plugs, "applying snapshot")
 end
 
 --- Save snapshot
@@ -654,19 +678,21 @@ end
 ---   with |MiniDeps.snap_get()|.
 ---   Default: `config.path.snapshot`.
 MiniDeps.snap_save = function(path)
-  path = path or H.full_path(H.get_config().path.snapshot)
-  if type(path) ~= 'string' then H.error('`path` should be string.') end
+	path = path or H.full_path(H.get_config().path.snapshot)
+	if type(path) ~= "string" then
+		H.error("`path` should be string.")
+	end
 
-  -- Compute snapshot
-  local snap = MiniDeps.snap_get()
+	-- Compute snapshot
+	local snap = MiniDeps.snap_get()
 
-  -- Write snapshot
-  local lines = vim.split(vim.inspect(snap), '\n')
-  lines[1] = 'return ' .. lines[1]
-  vim.fn.mkdir(vim.fn.fnamemodify(path, ':h'), 'p')
-  vim.fn.writefile(lines, path)
+	-- Write snapshot
+	local lines = vim.split(vim.inspect(snap), "\n")
+	lines[1] = "return " .. lines[1]
+	vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+	vim.fn.writefile(lines, path)
 
-  H.notify('Created snapshot at ' .. vim.inspect(path))
+	H.notify("Created snapshot at " .. vim.inspect(path))
 end
 
 --- Load snapshot file
@@ -676,13 +702,17 @@ end
 ---@param path string|nil A valid path on disk from where to read snapshot.
 ---   Default: `config.path.snapshot`.
 MiniDeps.snap_load = function(path)
-  path = path or H.full_path(H.get_config().path.snapshot)
-  if vim.fn.filereadable(path) ~= 1 then H.error('`path` should be path to a readable file.') end
+	path = path or H.full_path(H.get_config().path.snapshot)
+	if vim.fn.filereadable(path) ~= 1 then
+		H.error("`path` should be path to a readable file.")
+	end
 
-  local ok, snap = pcall(dofile, H.full_path(path))
-  if not (ok and type(snap) == 'table') then H.error('`path` is not a path to proper snapshot.') end
+	local ok, snap = pcall(dofile, H.full_path(path))
+	if not (ok and type(snap) == "table") then
+		H.error("`path` is not a path to proper snapshot.")
+	end
 
-  MiniDeps.snap_set(snap)
+	MiniDeps.snap_set(snap)
 end
 
 --- Get session
@@ -694,36 +724,38 @@ end
 ---@return session table Array with specifications of all plugins registered in
 ---   current session.
 MiniDeps.get_session = function()
-  -- Normalize `H.session` allowing specs for same plugin
-  local res, plugin_ids = {}, {}
-  local add_spec = function(spec)
-    local id = plugin_ids[spec.path] or (#res + 1)
-    -- Treat `depends` differently as it is an array and direct merge is bad
-    -- Also: https://github.com/neovim/neovim/pull/15094#discussion_r671663938
-    local depends = vim.deepcopy((res[id] or {}).depends or {})
-    vim.list_extend(depends, spec.depends or {})
-    res[id] = vim.tbl_deep_extend('force', res[id] or {}, spec)
-    res[id].depends = depends
+	-- Normalize `H.session` allowing specs for same plugin
+	local res, plugin_ids = {}, {}
+	local add_spec = function(spec)
+		local id = plugin_ids[spec.path] or (#res + 1)
+		-- Treat `depends` differently as it is an array and direct merge is bad
+		-- Also: https://github.com/neovim/neovim/pull/15094#discussion_r671663938
+		local depends = vim.deepcopy((res[id] or {}).depends or {})
+		vim.list_extend(depends, spec.depends or {})
+		res[id] = vim.tbl_deep_extend("force", res[id] or {}, spec)
+		res[id].depends = depends
 
-    plugin_ids[spec.path] = id
-  end
-  vim.tbl_map(add_spec, H.session)
-  H.session = res
+		plugin_ids[spec.path] = id
+	end
+	vim.tbl_map(add_spec, H.session)
+	H.session = res
 
-  -- Add 'start/' plugins that are in 'rtp'. NOTE: not whole session concept is
-  -- built around presence in 'rtp' to 100% ensure to preserve the order in
-  -- which user called `add()`.
-  local start_path = H.full_path(H.get_package_path() .. '/pack/deps/start')
-  local pattern = string.format('^%s/([^/]+)$', vim.pesc(start_path))
-  for _, runtime_path in ipairs(vim.api.nvim_list_runtime_paths()) do
-    -- Make sure plugin path is normalized (matters on Windows)
-    local path = H.full_path(runtime_path)
-    local name = string.match(path, pattern)
-    if name ~= nil then add_spec({ path = path, name = name, hooks = {}, depends = {} }) end
-  end
+	-- Add 'start/' plugins that are in 'rtp'. NOTE: not whole session concept is
+	-- built around presence in 'rtp' to 100% ensure to preserve the order in
+	-- which user called `add()`.
+	local start_path = H.full_path(H.get_package_path() .. "/pack/deps/start")
+	local pattern = string.format("^%s/([^/]+)$", vim.pesc(start_path))
+	for _, runtime_path in ipairs(vim.api.nvim_list_runtime_paths()) do
+		-- Make sure plugin path is normalized (matters on Windows)
+		local path = H.full_path(runtime_path)
+		local name = string.match(path, pattern)
+		if name ~= nil then
+			add_spec({ path = path, name = name, hooks = {}, depends = {} })
+		end
+	end
 
-  -- Return copy to not allow modification in place
-  return vim.deepcopy(res)
+	-- Return copy to not allow modification in place
+	return vim.deepcopy(res)
 end
 
 --- Execute function now
@@ -737,9 +769,11 @@ end
 ---
 ---@param f function Callable to execute.
 MiniDeps.now = function(f)
-  local ok, err = pcall(f)
-  if not ok then table.insert(H.cache.exec_errors, err) end
-  H.schedule_finish()
+	local ok, err = pcall(f)
+	if not ok then
+		table.insert(H.cache.exec_errors, err)
+	end
+	H.schedule_finish()
 end
 
 --- Execute function later
@@ -754,8 +788,8 @@ end
 ---
 ---@param f function Callable to execute.
 MiniDeps.later = function(f)
-  table.insert(H.cache.later_callback_queue, f)
-  H.schedule_finish()
+	table.insert(H.cache.later_callback_queue, f)
+	H.schedule_finish()
 end
 
 -- Helper data ================================================================
@@ -767,17 +801,17 @@ H.session = {}
 
 -- Various cache
 H.cache = {
-  -- Whether finish of `now()` or `later()` is already scheduled
-  finish_is_scheduled = false,
+	-- Whether finish of `now()` or `later()` is already scheduled
+	finish_is_scheduled = false,
 
-  -- Callback queue for `later()`
-  later_callback_queue = {},
+	-- Callback queue for `later()`
+	later_callback_queue = {},
 
-  -- Errors during execution of `now()` or `later()`
-  exec_errors = {},
+	-- Errors during execution of `now()` or `later()`
+	exec_errors = {},
 
-  -- Git version
-  git_version = nil,
+	-- Git version
+	git_version = nil,
 }
 
 -- Buffer name counts
@@ -786,46 +820,46 @@ H.buf_name_counts = {}
 -- Helper functionality =======================================================
 -- Settings -------------------------------------------------------------------
 H.setup_config = function(config)
-  -- General idea: if some table elements are not present in user-supplied
-  -- `config`, take them from default config
-  vim.validate({ config = { config, 'table', true } })
-  config = vim.tbl_deep_extend('force', vim.deepcopy(H.default_config), config or {})
+	-- General idea: if some table elements are not present in user-supplied
+	-- `config`, take them from default config
+	vim.validate({ config = { config, "table", true } })
+	config = vim.tbl_deep_extend("force", vim.deepcopy(H.default_config), config or {})
 
-  vim.validate({
-    job = { config.job, 'table' },
-    path = { config.path, 'table' },
-    silent = { config.silent, 'boolean' },
-  })
+	vim.validate({
+		job = { config.job, "table" },
+		path = { config.path, "table" },
+		silent = { config.silent, "boolean" },
+	})
 
-  vim.validate({
-    ['job.n_threads'] = { config.job.n_threads, 'number', true },
-    ['job.timeout'] = { config.job.timeout, 'number' },
-    ['path.package'] = { config.path.package, 'string' },
-    ['path.snapshot'] = { config.path.snapshot, 'string' },
-    ['path.log'] = { config.path.log, 'string' },
-  })
+	vim.validate({
+		["job.n_threads"] = { config.job.n_threads, "number", true },
+		["job.timeout"] = { config.job.timeout, "number" },
+		["path.package"] = { config.path.package, "string" },
+		["path.snapshot"] = { config.path.snapshot, "string" },
+		["path.log"] = { config.path.log, "string" },
+	})
 
-  return config
+	return config
 end
 
 H.apply_config = function(config)
-  MiniDeps.config = config
+	MiniDeps.config = config
 
-  -- Reset current session to allow resourcing script with `setup()` call
-  H.session = {}
+	-- Reset current session to allow resourcing script with `setup()` call
+	H.session = {}
 
-  -- Add target package path to 'packpath'
-  local pack_path = H.full_path(config.path.package)
-  vim.cmd('set packpath^=' .. vim.fn.fnameescape(pack_path))
+	-- Add target package path to 'packpath'
+	local pack_path = H.full_path(config.path.package)
+	vim.cmd("set packpath^=" .. vim.fn.fnameescape(pack_path))
 end
 
 H.get_config = function(config)
-  return vim.tbl_deep_extend('force', MiniDeps.config, vim.b.minideps_config or {}, config or {})
+	return vim.tbl_deep_extend("force", MiniDeps.config, vim.b.minideps_config or {}, config or {})
 end
 
 H.create_autocommands = function()
-  local gr = vim.api.nvim_create_augroup('MiniDeps', {})
-  vim.api.nvim_create_autocmd('ColorScheme', { group = gr, callback = H.create_default_hl, desc = 'Ensure colors' })
+	local gr = vim.api.nvim_create_augroup("MiniDeps", {})
+	vim.api.nvim_create_autocmd("ColorScheme", { group = gr, callback = H.create_default_hl, desc = "Ensure colors" })
 end
 
 --stylua: ignore
@@ -849,57 +883,77 @@ H.create_default_hl = function()
 end
 
 H.create_user_commands = function()
-  -- Do not create commands immediately to increase startup time
-  local new_cmd = vim.schedule_wrap(vim.api.nvim_create_user_command)
+	-- Do not create commands immediately to increase startup time
+	local new_cmd = vim.schedule_wrap(vim.api.nvim_create_user_command)
 
-  local complete_session_names = function(arg, _, _)
-    local session_names = vim.tbl_map(function(s) return s.name end, MiniDeps.get_session())
-    return vim.tbl_filter(function(n) return vim.startswith(n, arg) end, session_names)
-  end
-  local complete_disk_names = function(arg, _, _)
-    local disk_names = vim.tbl_map(function(p) return vim.fn.fnamemodify(p, ':t') end, H.get_all_plugin_paths())
-    return vim.tbl_filter(function(n) return vim.startswith(n, arg) end, disk_names)
-  end
+	local complete_session_names = function(arg, _, _)
+		local session_names = vim.tbl_map(function(s)
+			return s.name
+		end, MiniDeps.get_session())
+		return vim.tbl_filter(function(n)
+			return vim.startswith(n, arg)
+		end, session_names)
+	end
+	local complete_disk_names = function(arg, _, _)
+		local disk_names = vim.tbl_map(function(p)
+			return vim.fn.fnamemodify(p, ":t")
+		end, H.get_all_plugin_paths())
+		return vim.tbl_filter(function(n)
+			return vim.startswith(n, arg)
+		end, disk_names)
+	end
 
-  local add = function(input) MiniDeps.add(input.fargs[1]) end
-  new_cmd('DepsAdd', add, { nargs = '+', complete = complete_disk_names, desc = 'Add plugin to session' })
+	local add = function(input)
+		MiniDeps.add(input.fargs[1])
+	end
+	new_cmd("DepsAdd", add, { nargs = "+", complete = complete_disk_names, desc = "Add plugin to session" })
 
-  local make_update_cmd = function(name, offline, desc)
-    local callback = function(input)
-      local names
-      if #input.fargs > 0 then names = input.fargs end
-      MiniDeps.update(names, { force = input.bang, offline = offline })
-    end
-    local opts = { bang = true, complete = complete_session_names, nargs = '*', desc = desc }
-    new_cmd(name, callback, opts)
-  end
-  make_update_cmd('DepsUpdate', false, 'Update plugins')
-  make_update_cmd('DepsUpdateOffline', true, 'Update plugins without downloading from source')
+	local make_update_cmd = function(name, offline, desc)
+		local callback = function(input)
+			local names
+			if #input.fargs > 0 then
+				names = input.fargs
+			end
+			MiniDeps.update(names, { force = input.bang, offline = offline })
+		end
+		local opts = { bang = true, complete = complete_session_names, nargs = "*", desc = desc }
+		new_cmd(name, callback, opts)
+	end
+	make_update_cmd("DepsUpdate", false, "Update plugins")
+	make_update_cmd("DepsUpdateOffline", true, "Update plugins without downloading from source")
 
-  local show_log = function()
-    vim.cmd('edit ' .. vim.fn.fnameescape(H.get_config().path.log))
-    H.update_add_syntax()
-    vim.cmd([[syntax match MiniDepsTitle "^\(==========\).*\1$"]])
-  end
-  new_cmd('DepsShowLog', show_log, { desc = 'Show log' })
+	local show_log = function()
+		vim.cmd("edit " .. vim.fn.fnameescape(H.get_config().path.log))
+		H.update_add_syntax()
+		vim.cmd([[syntax match MiniDepsTitle "^\(==========\).*\1$"]])
+	end
+	new_cmd("DepsShowLog", show_log, { desc = "Show log" })
 
-  local clean = function(input) MiniDeps.clean({ force = input.bang }) end
-  new_cmd('DepsClean', clean, { bang = true, desc = 'Delete unused plugins' })
+	local clean = function(input)
+		MiniDeps.clean({ force = input.bang })
+	end
+	new_cmd("DepsClean", clean, { bang = true, desc = "Delete unused plugins" })
 
-  local snap_save = function(input) MiniDeps.snap_save(input.fargs[1]) end
-  new_cmd('DepsSnapSave', snap_save, { nargs = '*', complete = 'file', desc = 'Save plugin snapshot' })
+	local snap_save = function(input)
+		MiniDeps.snap_save(input.fargs[1])
+	end
+	new_cmd("DepsSnapSave", snap_save, { nargs = "*", complete = "file", desc = "Save plugin snapshot" })
 
-  local snap_load = function(input) MiniDeps.snap_load(input.fargs[1]) end
-  new_cmd('DepsSnapLoad', snap_load, { nargs = '*', complete = 'file', desc = 'Load plugin snapshot' })
+	local snap_load = function(input)
+		MiniDeps.snap_load(input.fargs[1])
+	end
+	new_cmd("DepsSnapLoad", snap_load, { nargs = "*", complete = "file", desc = "Load plugin snapshot" })
 end
 
 -- Git commands ---------------------------------------------------------------
 H.git_cmd = function(cmd_name, ...)
-  local args = H.git_args[cmd_name](...)
-  if args == nil then return {} end
+	local args = H.git_args[cmd_name](...)
+	if args == nil then
+		return {}
+	end
 
-  -- Use '-c gc.auto=0' to disable `stderr` "Auto packing..." messages
-  return { 'git', '-c', 'gc.auto=0', unpack(args) }
+	-- Use '-c gc.auto=0' to disable `stderr` "Auto packing..." messages
+	return { "git", "-c", "gc.auto=0", unpack(args) }
 end
 
 --stylua: ignore
@@ -960,437 +1014,544 @@ H.git_args = {
 }
 
 H.ensure_git_exec = function()
-  if H.cache.git_version ~= nil then return end
-  local jobs = { H.cli_new_job(H.git_cmd('version'), vim.fn.getcwd()) }
-  H.cli_run(jobs)
-  if #jobs[1].err > 0 then H.error('Could not find executable `git` CLI tool') end
-  local major, minor = string.match(H.cli_stream_tostring(jobs[1].out), '(%d+)%.(%d+)')
-  H.cache.git_version = { major = tonumber(major), minor = tonumber(minor) }
+	if H.cache.git_version ~= nil then
+		return
+	end
+	local jobs = { H.cli_new_job(H.git_cmd("version"), vim.fn.getcwd()) }
+	H.cli_run(jobs)
+	if #jobs[1].err > 0 then
+		H.error("Could not find executable `git` CLI tool")
+	end
+	local major, minor = string.match(H.cli_stream_tostring(jobs[1].out), "(%d+)%.(%d+)")
+	H.cache.git_version = { major = tonumber(major), minor = tonumber(minor) }
 end
 
 -- Plugin specification -------------------------------------------------------
 H.expand_spec = function(target, spec)
-  -- Prepare
-  if type(spec) == 'string' then
-    local field = string.find(spec, '/') ~= nil and 'source' or 'name'
-    spec = { [field] = spec }
-  end
-  if type(spec) ~= 'table' then H.error('Plugin spec should be table.') end
+	-- Prepare
+	if type(spec) == "string" then
+		local field = string.find(spec, "/") ~= nil and "source" or "name"
+		spec = { [field] = spec }
+	end
+	if type(spec) ~= "table" then
+		H.error("Plugin spec should be table.")
+	end
 
-  local has_min_fields = type(spec.source) == 'string' or type(spec.name) == 'string'
-  if not has_min_fields then H.error('Plugin spec should have proper `source` or `name`.') end
+	local has_min_fields = type(spec.source) == "string" or type(spec.name) == "string"
+	if not has_min_fields then
+		H.error("Plugin spec should have proper `source` or `name`.")
+	end
 
-  -- Normalize
-  spec = vim.deepcopy(spec)
+	-- Normalize
+	spec = vim.deepcopy(spec)
 
-  if spec.source and type(spec.source) ~= 'string' then H.error('`source` in plugin spec should be string.') end
-  local is_user_repo = type(spec.source) == 'string' and spec.source:find('^[%w-]+/[%w-_.]+$') ~= nil
-  if is_user_repo then spec.source = 'https://github.com/' .. spec.source end
+	if spec.source and type(spec.source) ~= "string" then
+		H.error("`source` in plugin spec should be string.")
+	end
+	local is_user_repo = type(spec.source) == "string" and spec.source:find("^[%w-]+/[%w-_.]+$") ~= nil
+	if is_user_repo then
+		spec.source = "https://github.com/" .. spec.source
+	end
 
-  spec.name = spec.name or vim.fn.fnamemodify(spec.source, ':t')
-  if type(spec.name) ~= 'string' then H.error('`name` in plugin spec should be string.') end
-  if string.find(spec.name, '/') ~= nil then H.error('`name` in plugin spec should not contain "/".') end
-  if spec.name == '' then H.error('`name` in plugin spec should not be empty.') end
+	spec.name = spec.name or vim.fn.fnamemodify(spec.source, ":t")
+	if type(spec.name) ~= "string" then
+		H.error("`name` in plugin spec should be string.")
+	end
+	if string.find(spec.name, "/") ~= nil then
+		H.error('`name` in plugin spec should not contain "/".')
+	end
+	if spec.name == "" then
+		H.error("`name` in plugin spec should not be empty.")
+	end
 
-  if spec.checkout and type(spec.checkout) ~= 'string' then H.error('`checkout` in plugin spec should be string.') end
-  if spec.monitor and type(spec.monitor) ~= 'string' then H.error('`monitor` in plugin spec should be string.') end
+	if spec.checkout and type(spec.checkout) ~= "string" then
+		H.error("`checkout` in plugin spec should be string.")
+	end
+	if spec.monitor and type(spec.monitor) ~= "string" then
+		H.error("`monitor` in plugin spec should be string.")
+	end
 
-  spec.hooks = vim.deepcopy(spec.hooks) or {}
-  if type(spec.hooks) ~= 'table' then H.error('`hooks` in plugin spec should be table.') end
-  local hook_names = { 'pre_install', 'post_install', 'pre_checkout', 'post_checkout' }
-  for _, hook_name in ipairs(hook_names) do
-    local is_not_hook = spec.hooks[hook_name] and not vim.is_callable(spec.hooks[hook_name])
-    if is_not_hook then H.error('`hooks.' .. hook_name .. '` in plugin spec should be callable.') end
-  end
+	spec.hooks = vim.deepcopy(spec.hooks) or {}
+	if type(spec.hooks) ~= "table" then
+		H.error("`hooks` in plugin spec should be table.")
+	end
+	local hook_names = { "pre_install", "post_install", "pre_checkout", "post_checkout" }
+	for _, hook_name in ipairs(hook_names) do
+		local is_not_hook = spec.hooks[hook_name] and not vim.is_callable(spec.hooks[hook_name])
+		if is_not_hook then
+			H.error("`hooks." .. hook_name .. "` in plugin spec should be callable.")
+		end
+	end
 
-  -- Expand dependencies recursively before adding current spec to target
-  spec.depends = vim.deepcopy(spec.depends) or {}
-  if not H.islist(spec.depends) then H.error('`depends` in plugin spec should be array.') end
-  for _, dep_spec in ipairs(spec.depends) do
-    H.expand_spec(target, dep_spec)
-  end
+	-- Expand dependencies recursively before adding current spec to target
+	spec.depends = vim.deepcopy(spec.depends) or {}
+	if not H.islist(spec.depends) then
+		H.error("`depends` in plugin spec should be array.")
+	end
+	for _, dep_spec in ipairs(spec.depends) do
+		H.expand_spec(target, dep_spec)
+	end
 
-  table.insert(target, spec)
+	table.insert(target, spec)
 end
 
 -- Plugin operations ----------------------------------------------------------
 H.plugs_exec_hooks = function(plugs, name)
-  for _, p in ipairs(plugs) do
-    local has_error = p.job and #p.job.err > 0
-    local should_execute = vim.is_callable(p.hooks[name]) and not has_error
-    if should_execute then
-      local ok, err = pcall(p.hooks[name], { path = p.path, source = p.source, name = p.name })
-      if not ok then
-        local msg = string.format('Error executing %s hook in `%s`:\n%s', name, p.name, err)
-        H.notify(msg, 'ERROR')
-      end
-    end
-  end
+	for _, p in ipairs(plugs) do
+		local has_error = p.job and #p.job.err > 0
+		local should_execute = vim.is_callable(p.hooks[name]) and not has_error
+		if should_execute then
+			local ok, err = pcall(p.hooks[name], { path = p.path, source = p.source, name = p.name })
+			if not ok then
+				local msg = string.format("Error executing %s hook in `%s`:\n%s", name, p.name, err)
+				H.notify(msg, "ERROR")
+			end
+		end
+	end
 end
 
 H.plugs_install = function(plugs)
-  -- Clone
-  local prepare = function(p)
-    if p.source == nil and #p.job.err == 0 then p.job.err = { 'SPECIFICATION HAS NO `source` TO INSTALL PLUGIN.' } end
-    p.job.command = H.git_cmd('clone', p.source or '', p.path)
-    p.job.exit_msg = string.format('Installed `%s`', p.name)
-  end
-  H.plugs_run_jobs(plugs, prepare)
+	-- Clone
+	local prepare = function(p)
+		if p.source == nil and #p.job.err == 0 then
+			p.job.err = { "SPECIFICATION HAS NO `source` TO INSTALL PLUGIN." }
+		end
+		p.job.command = H.git_cmd("clone", p.source or "", p.path)
+		p.job.exit_msg = string.format("Installed `%s`", p.name)
+	end
+	H.plugs_run_jobs(plugs, prepare)
 
-  -- Checkout
-  vim.tbl_map(function(p) p.job.cwd = p.path end, plugs)
-  H.plugs_checkout(plugs, { exec_hooks = false, all_helptags = true })
+	-- Checkout
+	vim.tbl_map(function(p)
+		p.job.cwd = p.path
+	end, plugs)
+	H.plugs_checkout(plugs, { exec_hooks = false, all_helptags = true })
 
-  -- Show warnings and errors
-  H.plugs_show_job_notifications(plugs, 'installing plugin')
+	-- Show warnings and errors
+	H.plugs_show_job_notifications(plugs, "installing plugin")
 end
 
 H.plugs_download_updates = function(plugs)
-  -- Show actual target number of plugins attempted to fetch
-  local n_noerror = 0
-  for _, p in ipairs(plugs) do
-    if #p.job.err == 0 then n_noerror = n_noerror + 1 end
-  end
-  if n_noerror == 0 then return end
-  H.notify('Downloading ' .. n_noerror .. ' update' .. (n_noerror > 1 and 's' or ''))
+	-- Show actual target number of plugins attempted to fetch
+	local n_noerror = 0
+	for _, p in ipairs(plugs) do
+		if #p.job.err == 0 then
+			n_noerror = n_noerror + 1
+		end
+	end
+	if n_noerror == 0 then
+		return
+	end
+	H.notify("Downloading " .. n_noerror .. " update" .. (n_noerror > 1 and "s" or ""))
 
-  local prepare = function(p)
-    p.job.command = H.git_cmd('fetch')
-    p.job.exit_msg = string.format('Downloaded update for `%s`', p.name)
-  end
-  H.plugs_run_jobs(plugs, prepare)
+	local prepare = function(p)
+		p.job.command = H.git_cmd("fetch")
+		p.job.exit_msg = string.format("Downloaded update for `%s`", p.name)
+	end
+	H.plugs_run_jobs(plugs, prepare)
 end
 
 H.plugs_checkout = function(plugs, opts)
-  opts = vim.tbl_deep_extend('force', { exec_hooks = true, all_helptags = false }, opts or {})
+	opts = vim.tbl_deep_extend("force", { exec_hooks = true, all_helptags = false }, opts or {})
 
-  H.plugs_infer_head(plugs)
-  H.plugs_ensure_target_refs(plugs)
-  H.plugs_infer_commit(plugs, 'checkout', 'checkout_to')
+	H.plugs_infer_head(plugs)
+	H.plugs_ensure_target_refs(plugs)
+	H.plugs_infer_commit(plugs, "checkout", "checkout_to")
 
-  -- Operate only on plugins that actually need checkout
-  local checkout_plugs = vim.tbl_filter(function(p) return p.head ~= p.checkout_to end, plugs)
+	-- Operate only on plugins that actually need checkout
+	local checkout_plugs = vim.tbl_filter(function(p)
+		return p.head ~= p.checkout_to
+	end, plugs)
 
-  -- Stash changes
-  local stash_command = H.git_cmd('stash', H.get_timestamp())
-  local prepare = function(p) p.job.command = stash_command end
-  H.plugs_run_jobs(checkout_plugs, prepare)
+	-- Stash changes
+	local stash_command = H.git_cmd("stash", H.get_timestamp())
+	local prepare = function(p)
+		p.job.command = stash_command
+	end
+	H.plugs_run_jobs(checkout_plugs, prepare)
 
-  -- Execute pre hooks
-  if opts.exec_hooks then H.plugs_exec_hooks(checkout_plugs, 'pre_checkout') end
+	-- Execute pre hooks
+	if opts.exec_hooks then
+		H.plugs_exec_hooks(checkout_plugs, "pre_checkout")
+	end
 
-  -- Checkout
-  prepare = function(p)
-    p.job.command = H.git_cmd('checkout', p.checkout_to)
-    p.job.exit_msg = string.format('Checked out `%s` in `%s`', p.checkout, p.name)
-  end
-  H.plugs_run_jobs(checkout_plugs, prepare)
+	-- Checkout
+	prepare = function(p)
+		p.job.command = H.git_cmd("checkout", p.checkout_to)
+		p.job.exit_msg = string.format("Checked out `%s` in `%s`", p.checkout, p.name)
+	end
+	H.plugs_run_jobs(checkout_plugs, prepare)
 
-  -- Execute post hooks
-  if opts.exec_hooks then H.plugs_exec_hooks(checkout_plugs, 'post_checkout') end
+	-- Execute post hooks
+	if opts.exec_hooks then
+		H.plugs_exec_hooks(checkout_plugs, "post_checkout")
+	end
 
-  -- (Re)Generate help tags according to the current help files
-  local help_plugs = opts.all_helptags and plugs or checkout_plugs
-  for _, p in ipairs(help_plugs) do
-    local doc_dir = p.path .. '/doc'
-    -- Completely redo tags
-    vim.fn.delete(doc_dir .. '/tags')
-    local has_help_files = vim.fn.glob(doc_dir .. '/**') ~= ''
-    if has_help_files then pcall(vim.cmd, 'helptags ' .. vim.fn.fnameescape(doc_dir)) end
-  end
+	-- (Re)Generate help tags according to the current help files
+	local help_plugs = opts.all_helptags and plugs or checkout_plugs
+	for _, p in ipairs(help_plugs) do
+		local doc_dir = p.path .. "/doc"
+		-- Completely redo tags
+		vim.fn.delete(doc_dir .. "/tags")
+		local has_help_files = vim.fn.glob(doc_dir .. "/**") ~= ""
+		if has_help_files then
+			pcall(vim.cmd, "helptags " .. vim.fn.fnameescape(doc_dir))
+		end
+	end
 end
 
 -- Plugin operation helpers ---------------------------------------------------
 H.plugs_from_names = function(names)
-  if names and not H.islist(names) then H.error('`names` should be array.') end
-  for _, name in ipairs(names or {}) do
-    if type(name) ~= 'string' then H.error('`names` should contain only strings.') end
-  end
+	if names and not H.islist(names) then
+		H.error("`names` should be array.")
+	end
+	for _, name in ipairs(names or {}) do
+		if type(name) ~= "string" then
+			H.error("`names` should contain only strings.")
+		end
+	end
 
-  local res = {}
-  for _, spec in ipairs(MiniDeps.get_session()) do
-    if names == nil or vim.tbl_contains(names, spec.name) then
-      spec.job = H.cli_new_job({}, spec.path)
-      table.insert(res, spec)
-    end
-  end
+	local res = {}
+	for _, spec in ipairs(MiniDeps.get_session()) do
+		if names == nil or vim.tbl_contains(names, spec.name) then
+			spec.job = H.cli_new_job({}, spec.path)
+			table.insert(res, spec)
+		end
+	end
 
-  return res
+	return res
 end
 
 H.plugs_run_jobs = function(plugs, prepare, process)
-  if vim.is_callable(prepare) then vim.tbl_map(prepare, plugs) end
+	if vim.is_callable(prepare) then
+		vim.tbl_map(prepare, plugs)
+	end
 
-  H.cli_run(vim.tbl_map(function(p) return p.job end, plugs))
+	H.cli_run(vim.tbl_map(function(p)
+		return p.job
+	end, plugs))
 
-  if vim.is_callable(process) then vim.tbl_map(process, plugs) end
+	if vim.is_callable(process) then
+		vim.tbl_map(process, plugs)
+	end
 
-  -- Clean jobs. Preserve errors for jobs to be properly reusable.
-  for _, p in ipairs(plugs) do
-    p.job.command, p.job.exit_msg, p.job.out = {}, nil, {}
-  end
+	-- Clean jobs. Preserve errors for jobs to be properly reusable.
+	for _, p in ipairs(plugs) do
+		p.job.command, p.job.exit_msg, p.job.out = {}, nil, {}
+	end
 end
 
 H.plugs_show_job_notifications = function(plugs, action_name)
-  for _, p in ipairs(plugs) do
-    local warn = H.cli_stream_tostring(p.job.warn)
-    if warn ~= '' then
-      local msg = string.format('Warnings in `%s` during %s\n%s', p.name, action_name, warn)
-      H.notify(msg, 'WARN')
-    end
-    local err = H.cli_stream_tostring(p.job.err)
-    if err ~= '' then
-      local msg = string.format('Error in `%s` during %s\n%s', p.name, action_name, err)
-      H.notify(msg, 'ERROR')
-    end
-  end
+	for _, p in ipairs(plugs) do
+		local warn = H.cli_stream_tostring(p.job.warn)
+		if warn ~= "" then
+			local msg = string.format("Warnings in `%s` during %s\n%s", p.name, action_name, warn)
+			H.notify(msg, "WARN")
+		end
+		local err = H.cli_stream_tostring(p.job.err)
+		if err ~= "" then
+			local msg = string.format("Error in `%s` during %s\n%s", p.name, action_name, err)
+			H.notify(msg, "ERROR")
+		end
+	end
 end
 
 H.plugs_ensure_origin_source = function(plugs)
-  local prepare = function(p) p.job.command = p.source and H.git_cmd('set_origin', p.source) or H.git_cmd('get_origin') end
-  local process = function(p) p.source = p.source or H.cli_stream_tostring(p.job.out) end
-  H.plugs_run_jobs(plugs, prepare, process)
+	local prepare = function(p)
+		p.job.command = p.source and H.git_cmd("set_origin", p.source) or H.git_cmd("get_origin")
+	end
+	local process = function(p)
+		p.source = p.source or H.cli_stream_tostring(p.job.out)
+	end
+	H.plugs_run_jobs(plugs, prepare, process)
 end
 
 H.plugs_ensure_target_refs = function(plugs)
-  local prepare = function(p)
-    local needs_infer = p.checkout == nil or p.monitor == nil
-    p.job.command = needs_infer and H.git_cmd('get_default_origin_branch') or {}
-  end
-  local process = function(p)
-    local def_branch = H.cli_stream_tostring(p.job.out):gsub('^origin/', '')
-    p.checkout = p.checkout or def_branch
-    p.monitor = p.monitor or def_branch
-    p.has_monitor = p.checkout ~= p.monitor
-  end
-  H.plugs_run_jobs(plugs, prepare, process)
+	local prepare = function(p)
+		local needs_infer = p.checkout == nil or p.monitor == nil
+		p.job.command = needs_infer and H.git_cmd("get_default_origin_branch") or {}
+	end
+	local process = function(p)
+		local def_branch = H.cli_stream_tostring(p.job.out):gsub("^origin/", "")
+		p.checkout = p.checkout or def_branch
+		p.monitor = p.monitor or def_branch
+		p.has_monitor = p.checkout ~= p.monitor
+	end
+	H.plugs_run_jobs(plugs, prepare, process)
 end
 
 H.plugs_infer_head = function(plugs)
-  local prepare = function(p) p.job.command = p.head == nil and H.git_cmd('get_hash', 'HEAD') or {} end
-  local process = function(p) p.head = p.head or H.cli_stream_tostring(p.job.out) end
-  H.plugs_run_jobs(plugs, prepare, process)
+	local prepare = function(p)
+		p.job.command = p.head == nil and H.git_cmd("get_hash", "HEAD") or {}
+	end
+	local process = function(p)
+		p.head = p.head or H.cli_stream_tostring(p.job.out)
+	end
+	H.plugs_run_jobs(plugs, prepare, process)
 end
 
 H.plugs_infer_commit = function(plugs, field_ref, field_out)
-  -- Determine if reference points to an origin branch (to avoid error later)
-  local prepare = function(p)
-    -- Don't recompute commit if it is already computed
-    -- Don't compute commit for 'monitor' if it won't be used
-    p.should_infer = p[field_out] == nil and (field_ref ~= 'monitor' or p.has_monitor)
-    p.job.command = p.should_infer and H.git_cmd('is_origin_branch', p[field_ref]) or {}
-  end
-  local process = function(p) p.is_ref_origin_branch = H.cli_stream_tostring(p.job.out):find('%S') ~= nil end
-  H.plugs_run_jobs(plugs, prepare, process)
+	-- Determine if reference points to an origin branch (to avoid error later)
+	local prepare = function(p)
+		-- Don't recompute commit if it is already computed
+		-- Don't compute commit for 'monitor' if it won't be used
+		p.should_infer = p[field_out] == nil and (field_ref ~= "monitor" or p.has_monitor)
+		p.job.command = p.should_infer and H.git_cmd("is_origin_branch", p[field_ref]) or {}
+	end
+	local process = function(p)
+		p.is_ref_origin_branch = H.cli_stream_tostring(p.job.out):find("%S") ~= nil
+	end
+	H.plugs_run_jobs(plugs, prepare, process)
 
-  -- Infer commit depending on whether it points to origin branch
-  prepare = function(p)
-    -- Force `checkout = 'HEAD'` to always point to current commit to freeze
-    -- updates. This is needed because `origin/HEAD` is also present.
-    local is_from_origin = p.is_ref_origin_branch and p[field_ref] ~= 'HEAD'
-    local ref = (is_from_origin and 'origin/' or '') .. p[field_ref]
-    p.job.command = p.should_infer and H.git_cmd('get_hash', ref) or {}
-  end
-  process = function(p)
-    if p.should_infer then p[field_out] = H.cli_stream_tostring(p.job.out) end
-    p.is_ref_origin_branch, p.should_infer = nil, nil
-  end
-  H.plugs_run_jobs(plugs, prepare, process)
+	-- Infer commit depending on whether it points to origin branch
+	prepare = function(p)
+		-- Force `checkout = 'HEAD'` to always point to current commit to freeze
+		-- updates. This is needed because `origin/HEAD` is also present.
+		local is_from_origin = p.is_ref_origin_branch and p[field_ref] ~= "HEAD"
+		local ref = (is_from_origin and "origin/" or "") .. p[field_ref]
+		p.job.command = p.should_infer and H.git_cmd("get_hash", ref) or {}
+	end
+	process = function(p)
+		if p.should_infer then
+			p[field_out] = H.cli_stream_tostring(p.job.out)
+		end
+		p.is_ref_origin_branch, p.should_infer = nil, nil
+	end
+	H.plugs_run_jobs(plugs, prepare, process)
 end
 
 H.plugs_infer_log = function(plugs, field_from, field_to, field_out)
-  local prepare = function(p) p.job.command = H.git_cmd('log', p[field_from], p[field_to]) end
-  local process = function(p) p[field_out] = H.cli_stream_tostring(p.job.out) end
-  H.plugs_run_jobs(plugs, prepare, process)
+	local prepare = function(p)
+		p.job.command = H.git_cmd("log", p[field_from], p[field_to])
+	end
+	local process = function(p)
+		p[field_out] = H.cli_stream_tostring(p.job.out)
+	end
+	H.plugs_run_jobs(plugs, prepare, process)
 end
 
 -- File system ----------------------------------------------------------------
 H.get_plugin_path = function(name)
-  local package_path = H.get_package_path()
+	local package_path = H.get_package_path()
 
-  -- First check for the most common case of name present in 'pack/deps/opt'
-  local opt_path = string.format('%s/pack/deps/opt/%s', package_path, name)
-  if vim.loop.fs_stat(opt_path) ~= nil then return opt_path, true end
+	-- First check for the most common case of name present in 'pack/deps/opt'
+	local opt_path = string.format("%s/pack/deps/opt/%s", package_path, name)
+	if vim.loop.fs_stat(opt_path) ~= nil then
+		return opt_path, true
+	end
 
-  -- Allow processing 'pack/deps/start'
-  local start_path = string.format('%s/pack/deps/start/%s', package_path, name)
-  if vim.loop.fs_stat(start_path) ~= nil then return start_path, true end
+	-- Allow processing 'pack/deps/start'
+	local start_path = string.format("%s/pack/deps/start/%s", package_path, name)
+	if vim.loop.fs_stat(start_path) ~= nil then
+		return start_path, true
+	end
 
-  -- Use 'opt' directory by default
-  return opt_path, false
+	-- Use 'opt' directory by default
+	return opt_path, false
 end
 
 H.get_all_plugin_paths = function()
-  local deps_path, res = H.get_package_path() .. '/pack/deps', {}
-  vim.list_extend(res, H.readdir(deps_path .. '/opt'))
-  vim.list_extend(res, H.readdir(deps_path .. '/start'))
-  return res
+	local deps_path, res = H.get_package_path() .. "/pack/deps", {}
+	vim.list_extend(res, H.readdir(deps_path .. "/opt"))
+	vim.list_extend(res, H.readdir(deps_path .. "/start"))
+	return res
 end
 
-H.get_package_path = function() return H.full_path(H.get_config().path.package) end
+H.get_package_path = function()
+	return H.full_path(H.get_config().path.package)
+end
 
 -- Clean ----------------------------------------------------------------------
 H.clean_confirm = function(paths)
-  -- Compute lines
-  local lines = {
-    'This is a confirmation report before a clean.',
-    '',
-    'Lines `- <plugin>` show plugins to be deleted from disk.',
-    'Remove line to not delete that plugin.',
-    '',
-    'To finish clean, write this buffer (for example, with `:write` command).',
-    'To cancel clean, close this window (for example, with `:close` command).',
-    '',
-  }
-  local n_header = #lines - 1
-  for _, p in ipairs(paths) do
-    table.insert(lines, string.format('- %s (%s)', vim.fn.fnamemodify(p, ':t'), p))
-  end
+	-- Compute lines
+	local lines = {
+		"This is a confirmation report before a clean.",
+		"",
+		"Lines `- <plugin>` show plugins to be deleted from disk.",
+		"Remove line to not delete that plugin.",
+		"",
+		"To finish clean, write this buffer (for example, with `:write` command).",
+		"To cancel clean, close this window (for example, with `:close` command).",
+		"",
+	}
+	local n_header = #lines - 1
+	for _, p in ipairs(paths) do
+		table.insert(lines, string.format("- %s (%s)", vim.fn.fnamemodify(p, ":t"), p))
+	end
 
-  -- Show report in new buffer in separate tabpage
-  local finish_clean = function(buf_id)
-    -- Compute plugin paths to update
-    local paths_to_delete = {}
-    for _, l in ipairs(vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)) do
-      local cur_path = string.match(l, '^%- .* %((.*)%)$')
-      if cur_path ~= nil then table.insert(paths_to_delete, cur_path) end
-    end
+	-- Show report in new buffer in separate tabpage
+	local finish_clean = function(buf_id)
+		-- Compute plugin paths to update
+		local paths_to_delete = {}
+		for _, l in ipairs(vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)) do
+			local cur_path = string.match(l, "^%- .* %((.*)%)$")
+			if cur_path ~= nil then
+				table.insert(paths_to_delete, cur_path)
+			end
+		end
 
-    if #paths_to_delete == 0 then return H.notify('Nothing to delete') end
-    H.clean_delete(paths_to_delete)
-  end
-  H.show_confirm_buf(lines, { name = 'mini-deps://confirm-clean', exec_on_write = finish_clean })
+		if #paths_to_delete == 0 then
+			return H.notify("Nothing to delete")
+		end
+		H.clean_delete(paths_to_delete)
+	end
+	H.show_confirm_buf(lines, { name = "mini-deps://confirm-clean", exec_on_write = finish_clean })
 
-  -- Define basic highlighting
-  vim.cmd('syntax region MiniDepsHint start="^\\%1l" end="\\%' .. n_header .. 'l$"')
+	-- Define basic highlighting
+	vim.cmd('syntax region MiniDepsHint start="^\\%1l" end="\\%' .. n_header .. 'l$"')
 
-  -- Define conceal to show only name with whole path when cursor is on it
-  vim.cmd('syntax conceal on')
-  vim.cmd([[syntax match MiniDepsInfo "\s\+(.\{-})$"]])
-  vim.cmd('syntax conceal off')
-  vim.cmd('setlocal conceallevel=3')
+	-- Define conceal to show only name with whole path when cursor is on it
+	vim.cmd("syntax conceal on")
+	vim.cmd([[syntax match MiniDepsInfo "\s\+(.\{-})$"]])
+	vim.cmd("syntax conceal off")
+	vim.cmd("setlocal conceallevel=3")
 end
 
 H.clean_delete = function(paths)
-  local n_to_delete = #paths
-  for i, p in ipairs(paths) do
-    vim.fn.delete(p, 'rf')
-    local msg = string.format('(%d/%d) Deleted `%s` from disk', i, n_to_delete, vim.fn.fnamemodify(p, ':t'))
-    H.notify(msg)
-  end
+	local n_to_delete = #paths
+	for i, p in ipairs(paths) do
+		vim.fn.delete(p, "rf")
+		local msg = string.format("(%d/%d) Deleted `%s` from disk", i, n_to_delete, vim.fn.fnamemodify(p, ":t"))
+		H.notify(msg)
+	end
 end
 
 -- Update ---------------------------------------------------------------------
 H.update_compute_feedback_lines = function(plugs)
-  -- Construct lines with metadata for later sort
-  local plug_data = {}
-  for i, p in ipairs(plugs) do
-    local lines = H.update_compute_report_single(p)
+	-- Construct lines with metadata for later sort
+	local plug_data = {}
+	for i, p in ipairs(plugs) do
+		local lines = H.update_compute_report_single(p)
     --stylua: ignore
     plug_data[i] = {
       lines = lines, has_error = p.has_error, has_updates = p.has_updates, has_monitor = p.has_monitor, name = p.name, index = i
     }
-  end
+	end
 
-  -- Sort to put first ones with errors, then with updates, then rest
-  local compare = function(a, b)
-    if a.has_error and not b.has_error then return true end
-    if not a.has_error and b.has_error then return false end
-    if a.has_updates and not b.has_updates then return true end
-    if not a.has_updates and b.has_updates then return false end
-    if a.has_monitor and not b.has_monitor then return true end
-    if not a.has_monitor and b.has_monitor then return false end
-    if a.name == 'mini.nvim' then return true end
-    if b.name == 'mini.nvim' then return false end
-    return a.index < b.index
-  end
-  table.sort(plug_data, compare)
+	-- Sort to put first ones with errors, then with updates, then rest
+	local compare = function(a, b)
+		if a.has_error and not b.has_error then
+			return true
+		end
+		if not a.has_error and b.has_error then
+			return false
+		end
+		if a.has_updates and not b.has_updates then
+			return true
+		end
+		if not a.has_updates and b.has_updates then
+			return false
+		end
+		if a.has_monitor and not b.has_monitor then
+			return true
+		end
+		if not a.has_monitor and b.has_monitor then
+			return false
+		end
+		if a.name == "mini.nvim" then
+			return true
+		end
+		if b.name == "mini.nvim" then
+			return false
+		end
+		return a.index < b.index
+	end
+	table.sort(plug_data, compare)
 
-  local plug_lines = vim.tbl_map(function(x) return x.lines end, plug_data)
-  return vim.split(table.concat(plug_lines, '\n\n'), '\n')
+	local plug_lines = vim.tbl_map(function(x)
+		return x.lines
+	end, plug_data)
+	return vim.split(table.concat(plug_lines, "\n\n"), "\n")
 end
 
 H.update_compute_report_single = function(p)
-  p.has_error, p.has_updates = #p.job.err > 0, p.head ~= p.checkout_to
+	p.has_error, p.has_updates = #p.job.err > 0, p.head ~= p.checkout_to
 
-  local err = H.cli_stream_tostring(p.job.err)
-  if err ~= '' then return string.format('!!! %s !!!\n\n%s', p.name, err) end
+	local err = H.cli_stream_tostring(p.job.err)
+	if err ~= "" then
+		return string.format("!!! %s !!!\n\n%s", p.name, err)
+	end
 
-  -- Compute title surrounding based on whether plugin needs an update
-  local surrounding = p.has_updates and '+++' or '---'
-  local parts = { string.format('%s %s %s\n', surrounding, p.name, surrounding) }
+	-- Compute title surrounding based on whether plugin needs an update
+	local surrounding = p.has_updates and "+++" or "---"
+	local parts = { string.format("%s %s %s\n", surrounding, p.name, surrounding) }
 
-  if p.head == p.checkout_to then
-    table.insert(parts, 'Path:   ' .. p.path .. '\n')
-    table.insert(parts, 'Source: ' .. (p.source or '<None>') .. '\n')
-    table.insert(parts, string.format('State:  %s (%s)', p.checkout_to, p.checkout))
-  else
-    table.insert(parts, 'Path:         ' .. p.path .. '\n')
-    table.insert(parts, 'Source:       ' .. (p.source or '<None>') .. '\n')
-    table.insert(parts, 'State before: ' .. p.head .. '\n')
-    table.insert(parts, string.format('State after:  %s (%s)', p.checkout_to, p.checkout))
-  end
+	if p.head == p.checkout_to then
+		table.insert(parts, "Path:   " .. p.path .. "\n")
+		table.insert(parts, "Source: " .. (p.source or "<None>") .. "\n")
+		table.insert(parts, string.format("State:  %s (%s)", p.checkout_to, p.checkout))
+	else
+		table.insert(parts, "Path:         " .. p.path .. "\n")
+		table.insert(parts, "Source:       " .. (p.source or "<None>") .. "\n")
+		table.insert(parts, "State before: " .. p.head .. "\n")
+		table.insert(parts, string.format("State after:  %s (%s)", p.checkout_to, p.checkout))
+	end
 
-  -- Show pending updates only if they are present
-  if p.has_updates then
-    table.insert(parts, string.format('\n\nPending updates from `%s`:\n', p.checkout))
-    table.insert(parts, p.checkout_log)
-  end
+	-- Show pending updates only if they are present
+	if p.has_updates then
+		table.insert(parts, string.format("\n\nPending updates from `%s`:\n", p.checkout))
+		table.insert(parts, p.checkout_log)
+	end
 
-  -- Show monitor updates only if user asked for them
-  if p.has_monitor then
-    table.insert(parts, string.format('\n\nMonitor updates from `%s`:\n', p.monitor))
-    table.insert(parts, p.monitor_log ~= '' and p.monitor_log or '<Nothing>')
-  end
+	-- Show monitor updates only if user asked for them
+	if p.has_monitor then
+		table.insert(parts, string.format("\n\nMonitor updates from `%s`:\n", p.monitor))
+		table.insert(parts, p.monitor_log ~= "" and p.monitor_log or "<Nothing>")
+	end
 
-  return table.concat(parts, '')
+	return table.concat(parts, "")
 end
 
 H.update_feedback_confirm = function(lines)
-  -- Add helper header
-  local report = {
-    'This is a confirmation report before an update.',
-    '',
-    'Line `+++ <plugin_name> +++` means plugin will be updated.',
-    'See update details below it.',
-    'Changes starting with ">"/"<" will be added/removed.',
-    'Remove the line to not update that plugin.',
-    '',
-    'Line `--- <plugin_name> ---` means plugin has nothing to update.',
-    '',
-    "Line `!!! <plugin_name> !!!` means plugin had an error and won't be updated.",
-    'See error details below it.',
-    '',
-    'Use regular fold keys (`zM`, `zR`, etc.) to manage shorter view.',
-    'To finish update, write this buffer (for example, with `:write` command).',
-    'To cancel update, close this window (for example, with `:close` command).',
-    '',
-  }
-  local n_header = #report - 1
-  vim.list_extend(report, lines)
+	-- Add helper header
+	local report = {
+		"This is a confirmation report before an update.",
+		"",
+		"Line `+++ <plugin_name> +++` means plugin will be updated.",
+		"See update details below it.",
+		'Changes starting with ">"/"<" will be added/removed.',
+		"Remove the line to not update that plugin.",
+		"",
+		"Line `--- <plugin_name> ---` means plugin has nothing to update.",
+		"",
+		"Line `!!! <plugin_name> !!!` means plugin had an error and won't be updated.",
+		"See error details below it.",
+		"",
+		"Use regular fold keys (`zM`, `zR`, etc.) to manage shorter view.",
+		"To finish update, write this buffer (for example, with `:write` command).",
+		"To cancel update, close this window (for example, with `:close` command).",
+		"",
+	}
+	local n_header = #report - 1
+	vim.list_extend(report, lines)
 
-  -- Show report in new buffer in separate tabpage
-  local finish_update = function(buf_id)
-    -- Compute plugin names to update
-    local names = {}
-    for _, l in ipairs(vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)) do
-      local cur_name = string.match(l, '^%+%+%+ (.*) %+%+%+$')
-      if cur_name ~= nil then table.insert(names, cur_name) end
-    end
+	-- Show report in new buffer in separate tabpage
+	local finish_update = function(buf_id)
+		-- Compute plugin names to update
+		local names = {}
+		for _, l in ipairs(vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)) do
+			local cur_name = string.match(l, "^%+%+%+ (.*) %+%+%+$")
+			if cur_name ~= nil then
+				table.insert(names, cur_name)
+			end
+		end
 
-    -- Update and delete buffer (in that order, to show that update is done)
-    MiniDeps.update(names, { force = true, offline = true })
-  end
+		-- Update and delete buffer (in that order, to show that update is done)
+		MiniDeps.update(names, { force = true, offline = true })
+	end
 
-  H.show_confirm_buf(report, { name = 'mini-deps://confirm-update', exec_on_write = finish_update, setup_folds = true })
+	H.show_confirm_buf(
+		report,
+		{ name = "mini-deps://confirm-update", exec_on_write = finish_update, setup_folds = true }
+	)
 
-  -- Define basic highlighting
-  vim.cmd('syntax region MiniDepsHint start="^\\%1l" end="\\%' .. n_header .. 'l$"')
-  H.update_add_syntax()
+	-- Define basic highlighting
+	vim.cmd('syntax region MiniDepsHint start="^\\%1l" end="\\%' .. n_header .. 'l$"')
+	H.update_add_syntax()
 end
 
 H.update_add_syntax = function()
-  vim.cmd([[
+	vim.cmd([[
     syntax match MiniDepsTitleError    "^!!! .\+ !!!$"
     syntax match MiniDepsTitleUpdate   "^+++ .\+ +++$"
     syntax match MiniDepsTitleSame     "^--- .\+ ---$"
@@ -1406,32 +1567,36 @@ H.update_add_syntax = function()
 end
 
 H.update_feedback_log = function(lines)
-  local title = string.format('========== Update %s ==========', H.get_timestamp())
-  table.insert(lines, 1, title)
-  table.insert(lines, '')
+	local title = string.format("========== Update %s ==========", H.get_timestamp())
+	table.insert(lines, 1, title)
+	table.insert(lines, "")
 
-  local log_path = H.get_config().path.log
-  vim.fn.mkdir(vim.fn.fnamemodify(log_path, ':h'), 'p')
-  vim.fn.writefile(lines, log_path, 'a')
+	local log_path = H.get_config().path.log
+	vim.fn.mkdir(vim.fn.fnamemodify(log_path, ":h"), "p")
+	vim.fn.writefile(lines, log_path, "a")
 end
 
 -- Confirm --------------------------------------------------------------------
 H.show_confirm_buf = function(lines, opts)
-  -- Show buffer
-  local buf_id = vim.api.nvim_create_buf(true, true)
-  H.buf_set_name(buf_id, opts.name)
-  vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
-  vim.cmd('tab sbuffer ' .. buf_id)
-  local tab_num, win_id = vim.api.nvim_tabpage_get_number(0), vim.api.nvim_get_current_win()
+	-- Show buffer
+	local buf_id = vim.api.nvim_create_buf(true, true)
+	H.buf_set_name(buf_id, opts.name)
+	vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
+	vim.cmd("tab sbuffer " .. buf_id)
+	local tab_num, win_id = vim.api.nvim_tabpage_get_number(0), vim.api.nvim_get_current_win()
 
-  local delete_buffer = vim.schedule_wrap(function()
-    pcall(vim.api.nvim_buf_delete, buf_id, { force = true })
-    pcall(function() vim.cmd('tabclose ' .. tab_num) end)
-    vim.cmd('redraw')
-  end)
+	local delete_buffer = vim.schedule_wrap(function()
+		pcall(vim.api.nvim_buf_delete, buf_id, { force = true })
+		pcall(function()
+			vim.cmd("tabclose " .. tab_num)
+		end)
+		vim.cmd("redraw")
+	end)
 
-  -- Define folding
-  local is_title = function(l) return l:find('^%-%-%-') or l:find('^%+%+%+') or l:find('^%!%!%!') end
+	-- Define folding
+	local is_title = function(l)
+		return l:find("^%-%-%-") or l:find("^%+%+%+") or l:find("^%!%!%!")
+	end
   --stylua: ignore
   MiniDeps._confirm_foldexpr = function(lnum)
     if lnum == 1 then return 0 end
@@ -1440,187 +1605,227 @@ H.show_confirm_buf = function(lines, opts)
     return '='
   end
 
-  -- Possibly set up folding. Use `:setlocal` for these options to not be
-  -- inherited if some other buffer is opened in the same window.
-  if opts.setup_folds then
-    vim.cmd('setlocal foldenable foldmethod=expr foldlevel=999')
-    vim.cmd('setlocal foldexpr=v:lua.MiniDeps._confirm_foldexpr(v:lnum)')
-  end
+	-- Possibly set up folding. Use `:setlocal` for these options to not be
+	-- inherited if some other buffer is opened in the same window.
+	if opts.setup_folds then
+		vim.cmd("setlocal foldenable foldmethod=expr foldlevel=999")
+		vim.cmd("setlocal foldexpr=v:lua.MiniDeps._confirm_foldexpr(v:lnum)")
+	end
 
-  -- Define action on accepting confirm
-  local finish = function()
-    MiniDeps._confirm_foldexpr = nil
-    opts.exec_on_write(buf_id)
-    delete_buffer()
-  end
-  -- - Use `nested` to allow other events (`WinEnter` for 'mini.statusline')
-  vim.api.nvim_create_autocmd('BufWriteCmd', { buffer = buf_id, nested = true, callback = finish })
+	-- Define action on accepting confirm
+	local finish = function()
+		MiniDeps._confirm_foldexpr = nil
+		opts.exec_on_write(buf_id)
+		delete_buffer()
+	end
+	-- - Use `nested` to allow other events (`WinEnter` for 'mini.statusline')
+	vim.api.nvim_create_autocmd("BufWriteCmd", { buffer = buf_id, nested = true, callback = finish })
 
-  -- Define action to cancel confirm
-  local cancel_au_id
-  local on_cancel = function(data)
-    MiniDeps._confirm_foldexpr = nil
-    if tonumber(data.match) ~= win_id then return end
-    pcall(vim.api.nvim_del_autocmd, cancel_au_id)
-    delete_buffer()
-  end
-  cancel_au_id = vim.api.nvim_create_autocmd('WinClosed', { nested = true, callback = on_cancel })
+	-- Define action to cancel confirm
+	local cancel_au_id
+	local on_cancel = function(data)
+		MiniDeps._confirm_foldexpr = nil
+		if tonumber(data.match) ~= win_id then
+			return
+		end
+		pcall(vim.api.nvim_del_autocmd, cancel_au_id)
+		delete_buffer()
+	end
+	cancel_au_id = vim.api.nvim_create_autocmd("WinClosed", { nested = true, callback = on_cancel })
 
-  -- Set buffer-local options last (so that user autocmmands could override)
-  vim.bo.buftype, vim.bo.filetype, vim.bo.modified = 'acwrite', 'minideps-confirm', false
+	-- Set buffer-local options last (so that user autocmmands could override)
+	vim.bo.buftype, vim.bo.filetype, vim.bo.modified = "acwrite", "minideps-confirm", false
 end
 
 -- CLI ------------------------------------------------------------------------
 H.cli_run = function(jobs)
-  local config_job = H.get_config().job
-  local n_threads = math.max(config_job.n_threads or H.get_n_threads(), 1)
+	local config_job = H.get_config().job
+	local n_threads = math.max(config_job.n_threads or H.get_n_threads(), 1)
 
-  -- Use only actually runnable jobs
-  local should_run = function(job)
-    -- Run only if there is command to run and previous runs of same reusable
-    -- job did not result into error
-    return type(job.command) == 'table' and #job.command > 0 and #job.err == 0
-  end
-  jobs = vim.tbl_filter(should_run, jobs)
+	-- Use only actually runnable jobs
+	local should_run = function(job)
+		-- Run only if there is command to run and previous runs of same reusable
+		-- job did not result into error
+		return type(job.command) == "table" and #job.command > 0 and #job.err == 0
+	end
+	jobs = vim.tbl_filter(should_run, jobs)
 
-  local n_total, id_started, n_finished = #jobs, 0, 0
-  if n_total == 0 then return end
+	local n_total, id_started, n_finished = #jobs, 0, 0
+	if n_total == 0 then
+		return
+	end
 
-  local run_next
-  run_next = function()
-    if n_total <= id_started then return end
-    id_started = id_started + 1
+	local run_next
+	run_next = function()
+		if n_total <= id_started then
+			return
+		end
+		id_started = id_started + 1
 
-    local job = jobs[id_started]
-    local command, cwd, exit_msg = job.command or {}, job.cwd, job.exit_msg
+		local job = jobs[id_started]
+		local command, cwd, exit_msg = job.command or {}, job.cwd, job.exit_msg
 
-    -- Prepare data for `vim.loop.spawn`
-    local executable, args = command[1], vim.list_slice(command, 2, #command)
-    local process, stdout, stderr = nil, vim.loop.new_pipe(), vim.loop.new_pipe()
-    local spawn_opts = { args = args, cwd = cwd, stdio = { nil, stdout, stderr } }
+		-- Prepare data for `vim.loop.spawn`
+		local executable, args = command[1], vim.list_slice(command, 2, #command)
+		local process, stdout, stderr = nil, vim.loop.new_pipe(), vim.loop.new_pipe()
+		local spawn_opts = { args = args, cwd = cwd, stdio = { nil, stdout, stderr } }
 
-    local on_exit = function(code)
-      -- Process only not already closing job
-      if process:is_closing() then return end
-      process:close()
+		local on_exit = function(code)
+			-- Process only not already closing job
+			if process:is_closing() then
+				return
+			end
+			process:close()
 
-      -- Process exit code: if 0 treat `stderr` as warning; error otherwise
-      if code == 0 then
-        vim.list_extend(job.warn, job.err)
-        -- NOTE: This is valid as only jobs with `err = {}` are filtered to run
-        job.err = {}
-      else
-        table.insert(job.err, 1, 'ERROR CODE ' .. code .. '\n')
-      end
+			-- Process exit code: if 0 treat `stderr` as warning; error otherwise
+			if code == 0 then
+				vim.list_extend(job.warn, job.err)
+				-- NOTE: This is valid as only jobs with `err = {}` are filtered to run
+				job.err = {}
+			else
+				table.insert(job.err, 1, "ERROR CODE " .. code .. "\n")
+			end
 
-      -- Finalize job
-      n_finished = n_finished + 1
-      if type(exit_msg) == 'string' and #job.err == 0 then
-        H.notify(string.format('(%d/%d) %s', n_finished, n_total, exit_msg))
-      end
+			-- Finalize job
+			n_finished = n_finished + 1
+			if type(exit_msg) == "string" and #job.err == 0 then
+				H.notify(string.format("(%d/%d) %s", n_finished, n_total, exit_msg))
+			end
 
-      -- Start next parallel job
-      run_next()
-    end
+			-- Start next parallel job
+			run_next()
+		end
 
-    process = vim.loop.spawn(executable, spawn_opts, on_exit)
-    H.cli_read_stream(stdout, job.out)
-    H.cli_read_stream(stderr, job.err)
-    vim.defer_fn(function()
-      if not process:is_active() then return end
-      table.insert(job.err, 'PROCESS REACHED TIMEOUT.')
-      on_exit(1)
-    end, config_job.timeout)
-  end
+		process = vim.loop.spawn(executable, spawn_opts, on_exit)
+		H.cli_read_stream(stdout, job.out)
+		H.cli_read_stream(stderr, job.err)
+		vim.defer_fn(function()
+			if not process:is_active() then
+				return
+			end
+			table.insert(job.err, "PROCESS REACHED TIMEOUT.")
+			on_exit(1)
+		end, config_job.timeout)
+	end
 
-  for _ = 1, n_threads do
-    run_next()
-  end
+	for _ = 1, n_threads do
+		run_next()
+	end
 
-  vim.wait(config_job.timeout * n_total, function() return n_total <= n_finished end, 1)
+	vim.wait(config_job.timeout * n_total, function()
+		return n_total <= n_finished
+	end, 1)
 end
 
 H.cli_read_stream = function(stream, feed)
-  local callback = function(err, data)
-    if err then return table.insert(feed, 1, 'ERROR: ' .. err) end
-    if data ~= nil then return table.insert(feed, data) end
-    stream:close()
-  end
-  stream:read_start(callback)
+	local callback = function(err, data)
+		if err then
+			return table.insert(feed, 1, "ERROR: " .. err)
+		end
+		if data ~= nil then
+			return table.insert(feed, data)
+		end
+		stream:close()
+	end
+	stream:read_start(callback)
 end
 
-H.cli_stream_tostring = function(stream) return (table.concat(stream):gsub('\n+$', '')) end
+H.cli_stream_tostring = function(stream)
+	return (table.concat(stream):gsub("\n+$", ""))
+end
 
 H.cli_new_job = function(command, cwd, exit_msg)
-  return { command = command, cwd = cwd, exit_msg = exit_msg, out = {}, warn = {}, err = {} }
+	return { command = command, cwd = cwd, exit_msg = exit_msg, out = {}, warn = {}, err = {} }
 end
 
 -- Two-stage execution --------------------------------------------------------
 H.schedule_finish = function()
-  if H.cache.finish_is_scheduled then return end
-  vim.schedule(H.finish)
-  H.cache.finish_is_scheduled = true
+	if H.cache.finish_is_scheduled then
+		return
+	end
+	vim.schedule(H.finish)
+	H.cache.finish_is_scheduled = true
 end
 
 H.finish = function()
-  local timer, step_delay = vim.loop.new_timer(), 1
-  local f = nil
-  f = vim.schedule_wrap(function()
-    local callback = H.cache.later_callback_queue[1]
-    if callback == nil then
-      H.cache.finish_is_scheduled, H.cache.later_callback_queue = false, {}
-      H.report_errors()
-      return
-    end
+	local timer, step_delay = vim.loop.new_timer(), 1
+	local f = nil
+	f = vim.schedule_wrap(function()
+		local callback = H.cache.later_callback_queue[1]
+		if callback == nil then
+			H.cache.finish_is_scheduled, H.cache.later_callback_queue = false, {}
+			H.report_errors()
+			return
+		end
 
-    table.remove(H.cache.later_callback_queue, 1)
-    MiniDeps.now(callback)
-    timer:start(step_delay, 0, f)
-  end)
-  timer:start(step_delay, 0, f)
+		table.remove(H.cache.later_callback_queue, 1)
+		MiniDeps.now(callback)
+		timer:start(step_delay, 0, f)
+	end)
+	timer:start(step_delay, 0, f)
 end
 
 H.report_errors = function()
-  if #H.cache.exec_errors == 0 then return end
-  local error_lines = table.concat(H.cache.exec_errors, '\n\n')
-  H.cache.exec_errors = {}
-  H.notify('There were errors during two-stage execution:\n\n' .. error_lines, 'ERROR')
+	if #H.cache.exec_errors == 0 then
+		return
+	end
+	local error_lines = table.concat(H.cache.exec_errors, "\n\n")
+	H.cache.exec_errors = {}
+	H.notify("There were errors during two-stage execution:\n\n" .. error_lines, "ERROR")
 end
 
 -- Utilities ------------------------------------------------------------------
-H.error = function(msg) error(string.format('(mini.deps) %s', msg), 0) end
+H.error = function(msg)
+	error(string.format("(mini.deps) %s", msg), 0)
+end
 
 H.notify = vim.schedule_wrap(function(msg, level)
-  level = level or 'INFO'
-  if H.get_config().silent and level ~= 'ERROR' and level ~= 'WARN' then return end
-  if type(msg) == 'table' then msg = table.concat(msg, '\n') end
-  vim.notify(string.format('(mini.deps) %s', msg), vim.log.levels[level])
-  vim.cmd('redraw')
+	level = level or "INFO"
+	if H.get_config().silent and level ~= "ERROR" and level ~= "WARN" then
+		return
+	end
+	if type(msg) == "table" then
+		msg = table.concat(msg, "\n")
+	end
+	vim.notify(string.format("(mini.deps) %s", msg), vim.log.levels[level])
+	vim.cmd("redraw")
 end)
 
-H.get_timestamp = function() return vim.fn.strftime('%Y-%m-%d %H:%M:%S') end
+H.get_timestamp = function()
+	return vim.fn.strftime("%Y-%m-%d %H:%M:%S")
+end
 
-H.get_n_threads = function() return math.floor(0.8 * #(vim.loop.cpu_info() or {})) end
+H.get_n_threads = function()
+	return math.floor(0.8 * #(vim.loop.cpu_info() or {}))
+end
 
-H.full_path = function(path) return (vim.fn.fnamemodify(path, ':p'):gsub('\\', '/'):gsub('/+', '/'):gsub('(.)/$', '%1')) end
+H.full_path = function(path)
+	return (vim.fn.fnamemodify(path, ":p"):gsub("\\", "/"):gsub("/+", "/"):gsub("(.)/$", "%1"))
+end
 
 H.readdir = function(path)
-  if vim.fn.isdirectory(path) ~= 1 then return {} end
-  return vim.tbl_map(function(x) return path .. '/' .. x end, vim.fn.readdir(path))
+	if vim.fn.isdirectory(path) ~= 1 then
+		return {}
+	end
+	return vim.tbl_map(function(x)
+		return path .. "/" .. x
+	end, vim.fn.readdir(path))
 end
 
 H.source = function(path)
-  pcall(function() vim.cmd('source ' .. vim.fn.fnameescape(path)) end)
+	pcall(function()
+		vim.cmd("source " .. vim.fn.fnameescape(path))
+	end)
 end
 
 H.buf_set_name = function(buf_id, name)
-  local n = (H.buf_name_counts[name] or 0) + 1
-  H.buf_name_counts[name] = n
-  local suffix = n == 1 and '' or ('_' .. n)
-  vim.api.nvim_buf_set_name(buf_id, name .. suffix)
+	local n = (H.buf_name_counts[name] or 0) + 1
+	H.buf_name_counts[name] = n
+	local suffix = n == 1 and "" or ("_" .. n)
+	vim.api.nvim_buf_set_name(buf_id, name .. suffix)
 end
 
 -- TODO: Remove after compatibility with Neovim=0.9 is dropped
-H.islist = vim.fn.has('nvim-0.10') == 1 and vim.islist or vim.tbl_islist
+H.islist = vim.fn.has("nvim-0.10") == 1 and vim.islist or vim.tbl_islist
 
 return MiniDeps

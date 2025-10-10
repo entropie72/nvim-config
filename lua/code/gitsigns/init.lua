@@ -1,10 +1,10 @@
-require('gitsigns').setup({
+require("gitsigns").setup({
 	signs = {
 		add = { text = "" },
-		change = { text = "󰜥" }
+		change = { text = "󰜥" },
 	},
 	current_line_blame = true,
 	current_line_blame_opts = {
-		delay = 0
-	}
+		delay = 0,
+	},
 })

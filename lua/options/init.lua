@@ -3,7 +3,7 @@ local wo = vim.wo
 local bo = vim.bo
 
 -- bo.smartindent = true
-vim.api.nvim_command('filetype plugin indent on')
+vim.api.nvim_command("filetype plugin indent on")
 
 o.shortmess = o.shortmess .. "c"
 o.hidden = true
@@ -47,7 +47,6 @@ o.colorcolumn = "80"
 o.fcs = "eob:*"
 o.syntax = "on"
 -- vim.api.nvim_set_hl("Normal", { ctermbg = 0, guibg = none }, false)
-
 
 -- local imap_expr = function(lhs, rhs)
 -- vim.keymap.set('i', lhs, rhs, { expr = true })

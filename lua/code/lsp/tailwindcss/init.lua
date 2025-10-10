@@ -1,1 +1,1 @@
-vim.lsp.enable('tailwindcss')
+vim.lsp.enable("tailwindcss")

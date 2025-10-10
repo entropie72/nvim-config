@@ -1,1 +1,1 @@
-require('utils.kulala')
+require("utils.kulala")
